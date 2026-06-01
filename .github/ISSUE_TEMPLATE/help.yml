@@ -1,0 +1,44 @@
+name: Help Wanted
+description: If you need help using the engine.
+labels: [help wanted]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: "Describe your problem here."
+    validations:
+      required: true
+
+  - type: dropdown
+    id: modtype
+    attributes:
+      label: "What does your question encompass?"
+      options:
+        - "Source Code Modding"
+        - "Modpack (HScript)"
+        - "Modpack (Lua)"
+        - "Other"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: buildtarget
+    attributes:
+      label: "What target are you using this engine with?"
+      options:
+        - "Windows"
+        - "Linux"
+        - "Mac"
+        - "HTML5 / Browser"
+        - "Neko / HashLink"
+    validations:
+      required: true
+
+  - type: input
+    id: buildsummary
+    attributes:
+      label: "Did you edit anything from source code? Summarize your changes."
+      description: "You may ignore this question if you are not making a source code mod!"
+      placeholder: "I edited ClientPrefs.hx and tried to add a new setting"
+    validations:
+      required: false
