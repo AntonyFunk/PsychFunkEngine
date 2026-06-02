@@ -43,7 +43,7 @@ class Language
 			n = value.indexOf('"');
 			if (n < 0) continue;
 
-			// trace("Mapped to " + key);
+			//trace("Mapped to " + key);
 			phrases.set(key, value.substring(n+1, value.lastIndexOf('"')).replace('\\n', '\n'));
 			hasPhrases = true;
 		}

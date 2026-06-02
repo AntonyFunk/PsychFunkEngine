@@ -193,7 +193,6 @@ class Paths
 	 */
 	static public function image(key:String, ?folder:String = null, ?allowGPU:Bool = true, ?modsAllowed:Bool = true):FlxGraphic
 	{
-		trace(getPath('images/$key.png', folder, modsAllowed));
 		return FunkinAssets.getGraphic(getPath('images/$key.png', folder, modsAllowed), true, allowGPU);
 	}
 
@@ -256,7 +255,6 @@ class Paths
 		if (FunkinAssets.exists(myXml))
 		{
 			#if MODS_ALLOWED
-			trace(myXml);
 			return FlxAtlasFrames.fromSparrow(imageLoaded, (useMod ? getTextFromFile(myXml) : myXml));
 			#else
 			return FlxAtlasFrames.fromSparrow(imageLoaded, myXml);
