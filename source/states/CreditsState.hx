@@ -60,8 +60,8 @@ class CreditsState extends ScriptedState
 				if(credit[1] != null && credit[1].length > 0)
 				{
 					var fileName = 'credits/' + credit[1];
-					if (Paths.fileExists('images/$fileName.png', IMAGE)) str = fileName;
-					else if (Paths.fileExists('images/$fileName-pixel.png', IMAGE)) str = fileName + '-pixel';
+					if (Paths.fileExists('images/$fileName.png')) str = fileName;
+					else if (Paths.fileExists('images/$fileName-pixel.png')) str = fileName + '-pixel';
 				}
 
 				var icon:AttachedSprite = new AttachedSprite(str);
@@ -231,11 +231,11 @@ class CreditsState extends ScriptedState
 	public static function parseCredits(?folder:String):Array<Array<String>> {
 		var list:Array<Array<String>> = [];
 		var path:String = 'data/credits.txt';
-		var creditsFile:String = (#if MODS_ALLOWED folder != null ? Paths.mods('$folder/$path') : #end Paths.getPath(path, TEXT, false));
+		var creditsFile:String = (#if MODS_ALLOWED folder != null ? Paths.mods('$folder/$path') : #end Paths.getPath(path, false));
 		
 		#if TRANSLATIONS_ALLOWED
 		path = 'data/credits-${ClientPrefs.data.language}.txt';
-		var translatedCredits:String = (#if MODS_ALLOWED folder != null ? Paths.mods('$folder/$path') : #end Paths.getPath(path, TEXT, false));
+		var translatedCredits:String = (#if MODS_ALLOWED folder != null ? Paths.mods('$folder/$path') : #end Paths.getPath(path, false));
 		#end
 
 		if (#if TRANSLATIONS_ALLOWED (FileSystem.exists(translatedCredits) && (creditsFile = translatedCredits) == translatedCredits) || #end FileSystem.exists(creditsFile))

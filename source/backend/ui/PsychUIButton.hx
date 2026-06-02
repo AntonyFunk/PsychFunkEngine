@@ -13,6 +13,7 @@ class PsychUIButton extends FlxSpriteGroup
 
 	public var onChangeState:String->Void;
 	public var onClick:Void->Void;
+	public var onClickReleased:Void->Void;
 	
 	public var clickStyle:UIStyleData = {
 		bgColor: FlxColor.BLACK,
@@ -45,6 +46,7 @@ class PsychUIButton extends FlxSpriteGroup
 		this.label = label;
 		
 		this.onClick = onClick;
+
 		forceCheckNext = true;
 	}
 
@@ -72,11 +74,13 @@ class PsychUIButton extends FlxSpriteGroup
 
 		if(forceCheckNext || FlxG.mouse.justMoved || FlxG.mouse.justPressed)
 		{
-			var overlapped:Bool = (FlxG.mouse.overlaps(bg, camera));
+			if (PsychUIDropDownMenu.focusOn != null) return;
+
+			final overlapped:Bool = (FlxG.mouse.overlaps(bg, camera));
 
 			forceCheckNext = false;
 
-			if(!isClicked)
+			if (!isClicked)
 			{
 				var style:UIStyleData = (overlapped) ? hoverStyle : normalStyle;
 				bg.color = style.bgColor;
@@ -84,14 +88,24 @@ class PsychUIButton extends FlxSpriteGroup
 				text.color = style.textColor;
 			}
 
-			if(overlapped && FlxG.mouse.justPressed)
+			if(overlapped && (FlxG.mouse.justPressed || FlxG.mouse.justReleased))
 			{
 				isClicked = true;
+
 				bg.color = clickStyle.bgColor;
 				bg.alpha = clickStyle.bgAlpha;
 				text.color = clickStyle.textColor;
-				if(onClick != null) onClick();
-				if(broadcastButtonEvent) PsychUIEventHandler.event(CLICK_EVENT, this);
+
+				if (FlxG.mouse.justPressed)
+				{
+					if (onClick != null) onClick();
+				}
+				else
+				{
+					if (onClickReleased != null) onClickReleased();
+				}
+
+				if (broadcastButtonEvent) PsychUIEventHandler.event(CLICK_EVENT, this);
 			}
 		}
 	}
@@ -102,7 +116,7 @@ class PsychUIButton extends FlxSpriteGroup
 		bg.updateHitbox();
 		text.fieldWidth = width;
 		text.x = bg.x;
-		text.y = bg.y + height/2 - text.height/2;
+		text.y = bg.getMidpoint().y - text.height * 0.5;
 	}
 
 	function set_label(v:String)

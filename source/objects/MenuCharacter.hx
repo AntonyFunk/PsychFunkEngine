@@ -48,7 +48,7 @@ class MenuCharacter extends FlxSprite
 			default:
 				var characterPath:String = 'images/menucharacters/' + character + '.json';
 
-				var path:String = Paths.getPath(characterPath, TEXT);
+				var path:String = Paths.getPath(characterPath);
 				#if MODS_ALLOWED
 				if (!FileSystem.exists(path))
 				#else
@@ -74,25 +74,29 @@ class MenuCharacter extends FlxSprite
 					trace('Error loading menu character file of "$character": $e');
 				}
 
-				frames = Paths.getSparrowAtlas('menucharacters/' + charFile.image);
-				animation.addByPrefix('idle', charFile.idle_anim, 24);
+				if (Paths.fileExists('images/menucharacters/' + charFile.image + '.png'))
+					frames = Paths.getSparrowAtlas('menucharacters/' + charFile.image);
 
-				var confirmAnim:String = charFile.confirm_anim;
-				if(confirmAnim != null && confirmAnim.length > 0 && confirmAnim != charFile.idle_anim)
-				{
-					animation.addByPrefix('confirm', confirmAnim, 24, false);
-					if (animation.getByName('confirm') != null) //check for invalid animation
-						hasConfirmAnimation = true;
+				if (frames != null) {
+					animation.addByPrefix('idle', charFile.idle_anim, 24);
+
+					var confirmAnim:String = charFile.confirm_anim;
+					if(confirmAnim != null && confirmAnim.length > 0 && confirmAnim != charFile.idle_anim)
+					{
+						animation.addByPrefix('confirm', confirmAnim, 24, false);
+						if (animation.getByName('confirm') != null) //check for invalid animation
+							hasConfirmAnimation = true;
+					}
+					
+					animation.play('idle');
 				}
+				
 				flipX = (charFile.flipX == true);
 
-				if(charFile.scale != 1)
-				{
-					scale.set(charFile.scale, charFile.scale);
-					updateHitbox();
-				}
+				scale.set(charFile.scale, charFile.scale);
+				updateHitbox();
+
 				offset.set(charFile.position[0], charFile.position[1]);
-				animation.play('idle');
 
 				antialiasing = (charFile.antialiasing != false && ClientPrefs.data.antialiasing);
 		}

@@ -1,206 +1,210 @@
 package backend.ui;
 
+import flixel.util.FlxSignal.FlxTypedSignal;
+
 class PsychUINumericStepper extends PsychUIInputText
 {
 	public static final CHANGE_EVENT = "numericstepper_change";
 
-	public var step:Float = 0;
-	public var min(default, set):Float = 0;
-	public var max(default, set):Float = 0;
-	public var decimals(default, set):Int = 0;
-	public var isPercent(default, set):Bool = false;
+	public final onValueChange = new FlxTypedSignal<(value:Float)->Void>();
+
 	public var buttonPlus:FlxSprite;
 	public var buttonMinus:FlxSprite;
 
-	public var onValueChange:Void->Void;
+	public var step:Float = 0;
+
+	public var min(default, set):Float = 0;
+	public var max(default, set):Float = 0;
+
+	public var decimals(default, set):Int = 0;
+	public var isPercent(default, set):Bool = false;
+
 	public var value(default, set):Float;
-	public function new(x:Float = 0, y:Float = 0, step:Float = 1, defValue:Float = 0, min:Float = -999, max:Float = 999, decimals:Int = 0, ?wid:Int = 60, ?isPercent:Bool = false)
+
+	public var broadcastStepperEvent:Bool = true;
+
+	public function new(x:Float = 0, y:Float = 0, step:Float = 1, value:Float = 0, min:Float = -999, max:Float = 999, decimals:Int = 0, ?width:Int = 60, ?isPercent:Bool = false)
 	{
-		super(x, y, wid, '');
-		fieldWidth = Std.int(behindText.width + 2);
+		super(x, y, width, '');
+		
 		@:bypassAccessor this.decimals = decimals;
 		@:bypassAccessor this.isPercent = isPercent;
 		@:bypassAccessor this.min = min;
 		@:bypassAccessor this.max = max;
+
 		this.step = step;
 		_updateFilter();
 
-		buttonPlus = new FlxSprite(fieldWidth).loadGraphic(Paths.image('psych-ui/stepper_plus', 'embed'), true, 16, 16);
-		buttonPlus.animation.add('normal', [0], false);
-		buttonPlus.animation.add('pressed', [1], false);
-		buttonPlus.animation.play('normal');
-		add(buttonPlus);
-		
-		buttonMinus = new FlxSprite(fieldWidth + buttonPlus.width).loadGraphic(Paths.image('psych-ui/stepper_minus', 'embed'), true, 16, 16);
+		buttonMinus = new FlxSprite().loadGraphic(Paths.image('psych-ui/stepper_minus', 'embed'), true, 16, 16);
 		buttonMinus.animation.add('normal', [0], false);
 		buttonMinus.animation.add('pressed', [1], false);
 		buttonMinus.animation.play('normal');
 		add(buttonMinus);
 
-		unfocus = function()
-		{
-			_updateValue();
-			_internalOnChange();
-		}
-		value = defValue;
+		inputText.fieldWidth = Std.int(inputText.behindText.width - 2);
+		inputText.onTextChange.add((_, _) -> _onValueCallback());
+		inputText.alignment = CENTER;
+		inputText.wordWrap = false;
+
+		inputText.x += buttonMinus.width - 1;
+		inputText.fieldWidth = width - buttonMinus.width - 16;
+		
+		buttonPlus = new FlxSprite(inputText.fieldWidth + buttonMinus.width).loadGraphic(Paths.image('psych-ui/stepper_plus', 'embed'), true, 16, 16);
+		buttonPlus.animation.add('normal', [0], false);
+		buttonPlus.animation.add('pressed', [1], false);
+		buttonPlus.animation.play('normal');
+		add(buttonPlus);
+
+		this.value = value;
+	}
+
+	function _onValueCallback()
+	{
+		_updateValue();
+		_internalOnChange();
 	}
 
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
 
-		if(FlxG.mouse.justPressed)
+		if (buttonMinus == null || buttonPlus == null) return;
+
+		if (FlxG.mouse.justPressed && PsychUIDropDownMenu.focusOn == null)
 		{
-			if(buttonPlus != null && buttonPlus.exists && FlxG.mouse.overlaps(buttonPlus, camera))
+			for (i => button in [buttonMinus, buttonPlus])
 			{
-				buttonPlus.animation.play('pressed');
-				value += step;
-				_internalOnChange();
-			}
-			else if(buttonMinus != null && buttonMinus.exists && FlxG.mouse.overlaps(buttonMinus, camera))
-			{
-				buttonMinus.animation.play('pressed');
-				value -= step;
-				_internalOnChange();
+				if (button.animation.curAnim == null) continue;
+
+				if (button.exists && FlxG.mouse.overlaps(button, camera))
+				{
+					button.animation.play('pressed');
+
+					value += step * (i != 0 ? 1 : -1);
+					_internalOnChange();
+
+					break;
+				}
 			}
 		}
-		else if(FlxG.mouse.released)
+		else if (FlxG.mouse.released)
 		{
-			if(buttonPlus != null && buttonPlus.exists && buttonPlus.animation.curAnim != null && buttonPlus.animation.curAnim.name != 'normal')
-				buttonPlus.animation.play('normal');
-			if(buttonMinus != null && buttonMinus.exists && buttonMinus.animation.curAnim != null && buttonMinus.animation.curAnim.name != 'normal')
-				buttonMinus.animation.play('normal');
+			for (button in [buttonMinus, buttonPlus])
+			{
+				if (button.animation.curAnim == null) continue;
+
+				if (button.exists && button.animation.curAnim.name != 'normal')
+					button.animation.play('normal');
+			}
 		}
 	}
 
-	function set_value(v:Float)
+	function set_value(Value:Float)
 	{
-		value = Math.max(min, Math.min(max, v));
+		value = Math.max(min, Math.min(max, Value));
 		text = Std.string(isPercent ? (value * 100) : value);
+
 		_updateValue();
+
 		return value;
 	}
 
-	function set_min(v:Float)
+	function set_min(Value:Float)
 	{
-		min = v;
-		@:bypassAccessor if(min > max) max = min;
+		min = Value;
+		@:bypassAccessor if (min > max) max = min;
+
 		_updateFilter();
 		_updateValue();
+		
 		return min;
 	}
 
-	function set_max(v:Float)
+	function set_max(Value:Float)
 	{
-		max = v;
-		@:bypassAccessor if(max < min) min = max;
+		max = Value;
+		@:bypassAccessor if (max < min) min = max;
+
 		_updateFilter();
 		_updateValue();
+
 		return max;
 	}
 
-	function set_decimals(v:Int)
+	function set_decimals(Value:Int)
 	{
-		decimals = v;
-		_updateFilter();
-		return decimals;
-	}
-	function set_isPercent(v:Bool)
-	{
-		var changed:Bool = (isPercent != v);
-		isPercent = v;
+		decimals = Value;
+
 		_updateFilter();
 
-		if(changed)
+		return decimals;
+	}
+
+	function set_isPercent(Value:Bool)
+	{
+		final changed = (isPercent != Value);
+
+		isPercent = Value;
+		_updateFilter();
+
+		if (changed)
 		{
 			text = Std.string(value * 100);
 			_updateValue();
 		}
+
 		return isPercent;
 	}
 
 	function _updateValue()
 	{
 		var txt:String = text.replace('%', '');
-		if(txt.indexOf('-') > 0)
-			txt.replace('-', '');
+		if (txt.indexOf('-') > 0) txt.replace('-', '');
 
 		while(txt.indexOf('.') > -1 && txt.indexOf('.') != txt.lastIndexOf('.'))
 		{
-			var lastId = txt.lastIndexOf('.');
-			txt = txt.substr(0, lastId) + txt.substring(lastId+1);
+			final lastId = txt.lastIndexOf('.');
+			txt = txt.substr(0, lastId) + txt.substring(lastId + 1);
 		}
 
 		var val:Float = Std.parseFloat(txt);
-		if(Math.isNaN(val))
-			val = 0;
 
-		if(isPercent) val /= 100;
+		if (Math.isNaN(val)) val = 0;
+		if (isPercent) val /= 100;
 
-		if(val < min) val = min;
-		else if(val > max) val = max;
+		if (val < min) val = min;
+		else if (val > max) val = max;
 		val = FlxMath.roundDecimal(val, decimals);
 		@:bypassAccessor value = val;
 
-		if(isPercent)
+		if (isPercent)
 		{
 			text = Std.string(val * 100);
 			text += '%';
 		}
 		else text = Std.string(val);
 
-		if(caretIndex > text.length) caretIndex = text.length;
-		if(selectIndex > text.length) selectIndex = text.length;
+		if (inputText.caretIndex > text.length) inputText.caretIndex = text.length;
+		if (inputText.selectIndex > text.length) inputText.selectIndex = text.length;
 	}
 	
 	function _updateFilter()
 	{
-		if(min < 0)
+		if (decimals > 0)
 		{
-			if(decimals > 0)
-			{
-				if(isPercent)
-					customFilterPattern = ~/[^0-9.%\-]*/g;
-				else
-					customFilterPattern = ~/[^0-9.\-]*/g;
-			}
-			else
-			{
-				if(isPercent)
-					customFilterPattern = ~/[^0-9%\-]*/g;
-				else
-					customFilterPattern = ~/[^0-9\-]*/g;
-			}
+			if (isPercent) customFilter = InputFilterPatterns.PERCENT_DECIMAL;
+			else customFilter = InputFilterPatterns.DECIMAL;
 		}
 		else
 		{
-			if(decimals > 0)
-			{
-				if(isPercent)
-					customFilterPattern = ~/[^0-9.%]*/g;
-				else
-					customFilterPattern = ~/[^0-9.]*/g;
-			}
-			else
-			{
-				if(isPercent)
-					customFilterPattern = ~/[^0-9%]*/g;
-				else
-					customFilterPattern = ~/[^0-9]*/g;
-			}
+			if (isPercent) InputFilterPatterns.PERCENT;
+			else customFilter = InputFilterPatterns.INTEGER;
 		}
 	}
 
-	public var broadcastStepperEvent:Bool = true;
 	function _internalOnChange()
 	{
-		if(onValueChange != null) onValueChange();
-		if(broadcastStepperEvent) PsychUIEventHandler.event(CHANGE_EVENT, this);
-	}
-
-	override function setGraphicSize(width:Float = 0, height:Float = 0)
-	{
-		super.setGraphicSize(width, height);
-		behindText.setGraphicSize(width - 32, height - 2);
+		onValueChange.dispatch(value);
+		if (broadcastStepperEvent) PsychUIEventHandler.event(CHANGE_EVENT, this);
 	}
 }

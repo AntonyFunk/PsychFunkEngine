@@ -2,6 +2,8 @@ package options;
 
 import objects.Character;
 
+import backend.Native;
+
 class GraphicsSettingsSubState extends BaseOptionsMenu
 {
 	var antialiasingOption:Int;
@@ -43,7 +45,15 @@ class GraphicsSettingsSubState extends BaseOptionsMenu
 			BOOL);
 		addOption(option);
 
-		#if !html5 //Apparently other framerates isn't correctly supported on Browser? Probably it has some V-Sync shit enabled by default, idk
+		#if !(mobile || html5)
+		var option:Option = new Option('VSync',
+			"If checked, the game attempts to match the framerate with your monitor's refresh rate.",
+			'vSync',
+			BOOL);
+		addOption(option);
+
+		option.onChange = onChangeFramerate;
+
 		var option:Option = new Option('Framerate',
 			"Changes how many frames the game can display per second.",
 			'framerate',
@@ -51,7 +61,7 @@ class GraphicsSettingsSubState extends BaseOptionsMenu
 		addOption(option);
 
 		final refreshRate:Int = FlxG.stage.application.window.displayMode.refreshRate;
-		option.minValue = 60;
+		option.minValue = 30;
 		option.maxValue = 240;
 		option.defaultValue = Std.int(FlxMath.bound(refreshRate, option.minValue, option.maxValue));
 		option.displayFormat = '%v FPS';
@@ -74,15 +84,18 @@ class GraphicsSettingsSubState extends BaseOptionsMenu
 
 	function onChangeFramerate(?_, ?_)
 	{
-		if(ClientPrefs.data.framerate > FlxG.drawFramerate)
+		var refreshRate = FlxG.stage.application.window.displayMode.refreshRate;
+		var framerate = ClientPrefs.data.vSync ? refreshRate : ClientPrefs.data.framerate;
+
+		if (ClientPrefs.data.framerate > FlxG.drawFramerate)
 		{
-			FlxG.updateFramerate = ClientPrefs.data.framerate;
-			FlxG.drawFramerate = ClientPrefs.data.framerate;
+			FlxG.updateFramerate = framerate;
+			FlxG.drawFramerate = framerate;
 		}
 		else
 		{
-			FlxG.drawFramerate = ClientPrefs.data.framerate;
-			FlxG.updateFramerate = ClientPrefs.data.framerate;
+			FlxG.drawFramerate = framerate;
+			FlxG.updateFramerate = framerate;
 		}
 	}
 

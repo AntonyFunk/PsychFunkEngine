@@ -119,7 +119,7 @@ class Song
 	public static var loadedSongName:String;
 	public static function loadFromJson(jsonInput:String, ?folder:String):SwagSong
 	{
-		if(folder == null) folder = jsonInput;
+		if (folder == null) folder = jsonInput;
 		PlayState.SONG = getChart(jsonInput, folder);
 		loadedSongName = folder;
 		chartPath = _lastPath;
@@ -137,17 +137,11 @@ class Song
 		if(folder == null) folder = jsonInput;
 		var rawData:String = null;
 		
-		var formattedFolder:String = Paths.formatToSongPath(folder);
-		var formattedSong:String = Paths.formatToSongPath(jsonInput);
+		var formattedFolder:String = Paths.format(folder);
+		var formattedSong:String = Paths.format(jsonInput);
 		_lastPath = Paths.json('$formattedFolder/$formattedSong');
 
-		#if MODS_ALLOWED
-		if(FileSystem.exists(_lastPath))
-			rawData = Paths.getTextFromFile(_lastPath);
-		else
-		#end
-		if (Assets.exists(_lastPath))
-			rawData = Assets.getText(_lastPath);
+		if (FunkinAssets.exists(_lastPath)) rawData = Paths.getTextFromFile(_lastPath);
 
 		return rawData != null ? parseJSON(rawData, jsonInput) : null;
 	}

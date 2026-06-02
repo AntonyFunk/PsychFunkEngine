@@ -10,7 +10,7 @@ enum Alignment
 	RIGHT;
 }
 
-class Alphabet extends FlxSpriteGroup
+class Alphabet extends FlxTypedSpriteGroup<AlphaCharacter>
 {
 	public var text(default, set):String;
 
@@ -295,7 +295,7 @@ class AlphaCharacter extends FlxSprite
 		{
 			var data:Dynamic = Json.parse(Paths.getTextFromFile(path));
 
-			if(data.allowed != null && data.allowed.length > 0)
+			if (data.allowed != null && data.allowed.length > 0)
 			{
 				for (i in 0...data.allowed.length)
 				{

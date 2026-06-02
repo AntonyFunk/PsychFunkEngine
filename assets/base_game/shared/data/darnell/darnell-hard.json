@@ -1236,5 +1236,9 @@
 	"bpm": 155,
 	"format": "psych_v1_convert",
 	"speed": 2.4,
+	"gameOverChar": "pico-dead",
+	"gameOverSound": "fnf_loss_sfx-pico",
+	"gameOverLoop": "gameOver-pico",
+	"gameOverEnd": "gameOverEnd-pico",
 	"artist": "Kawai Sprite"
 }

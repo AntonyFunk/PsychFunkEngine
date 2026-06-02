@@ -1,116 +1,113 @@
 package backend;
 
-import lime.app.Application;
-import lime.system.Display;
-import lime.system.System;
-
-import flixel.util.FlxColor;
+enum abstract MessageBoxType(Int) from Int to Int
+{
+    public var ERROR = 0;
+    public var WARNING = 1;
+    public var INFORMATION = 2;
+}
 
 #if (cpp && windows)
 @:buildXml('
 <target id="haxe">
-	<lib name="dwmapi.lib" if="windows"/>
-	<lib name="gdi32.lib" if="windows"/>
+    <lib name="user32.lib" if="windows"/>
+    <lib name="gdi32.lib" if="windows"/>
 </target>
 ')
 @:cppFileCode('
 #include <windows.h>
-#include <dwmapi.h>
-#include <winuser.h>
-#include <wingdi.h>
+#include <string>
 
-#define attributeDarkMode 20
-#define attributeDarkModeFallback 19
+static std::wstring hxToWString(const char* s)
+{
+	if (!s || !*s) return L"";
 
-#define attributeCaptionColor 34
-#define attributeTextColor 35
-#define attributeBorderColor 36
+	int len = MultiByteToWideChar(CP_UTF8, 0, s, -1, nullptr, 0);
+	if (len <= 1) return L"";
 
-struct HandleData {
-	DWORD pid = 0;
-	HWND handle = 0;
-};
-
-BOOL CALLBACK findByPID(HWND handle, LPARAM lParam) {
-	DWORD targetPID = ((HandleData*)lParam)->pid;
-	DWORD curPID = 0;
-
-	GetWindowThreadProcessId(handle, &curPID);
-	if (targetPID != curPID || GetWindow(handle, GW_OWNER) != (HWND)0 || !IsWindowVisible(handle)) {
-		return TRUE;
-	}
-
-	((HandleData*)lParam)->handle = handle;
-	return FALSE;
+	std::wstring result(len - 1, L\'\\0\');
+	MultiByteToWideChar(CP_UTF8, 0, s, -1, &result[0], len);
+	
+	return result;
 }
 
-HWND curHandle = 0;
-void getHandle() {
-	if (curHandle == (HWND)0) {
-		HandleData data;
-		data.pid = GetCurrentProcessId();
-		EnumWindows(findByPID, (LPARAM)&data);
-		curHandle = data.handle;
-	}
+static int windowAlertImpl(int type, const char* message, const char* title)
+{
+    UINT flags = MB_OK | MB_SETFOREGROUND | MB_TOPMOST;
+    switch(type)
+	{
+        case 0: flags |= MB_ICONERROR; break;
+        case 1: flags |= MB_ICONWARNING; break;
+        case 2: flags |= MB_ICONINFORMATION; break;
+    }
+
+    std::wstring wMsg = hxToWString(message);
+    std::wstring wTitle = hxToWString(title);
+
+    HWND parent = GetActiveWindow();
+    if (!parent) parent = GetForegroundWindow();
+
+    MessageBoxW(parent, wMsg.c_str(), wTitle.c_str(), flags);
 }
 ')
 #end
 class Native
 {
-	public static function __init__():Void
-	{
-		registerDPIAware();
-	}
+    public static function __init__():Void
+    {
+        registerDPIAware();
+    }
 
-	public static function registerDPIAware():Void
-	{
-		#if (cpp && windows)
-		// DPI Scaling fix for windows 
-		// this shouldn't be needed for other systems
-		// Credit to YoshiCrafter29 for finding this function
-		untyped __cpp__('
-			SetProcessDPIAware();	
-			#ifdef DPI_AWARENESS_CONTEXT
-			SetProcessDpiAwarenessContext(
-				#ifdef DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2
-				DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2
-				#else
-				DPI_AWARENESS_CONTEXT_SYSTEM_AWARE
-				#endif
-			);
-			#endif
-		');
-		#end
-	}
+    public static function registerDPIAware():Void
+    {
+        #if (cpp && windows)
+        untyped __cpp__('
+            #ifdef DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2
+            SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
+            #else
+            SetProcessDPIAware();
+            #endif
+        ');
+        #end
+    }
 
-	private static var fixedScaling:Bool = false;
-	public static function fixScaling():Void
-	{
-		if (fixedScaling) return;
-		fixedScaling = true;
+    private static var fixedScaling:Bool = false;
+    public static function fixScaling():Void
+    {
+        if (fixedScaling) return;
+        fixedScaling = true;
 
-		#if (cpp && windows)
-		final display:Null<Display> = System.getDisplay(0);
-		if (display != null)
-		{
-			final dpiScale:Float = display.dpi / 96;
-			@:privateAccess Application.current.window.width = Std.int(Main.game.width * dpiScale);
-			@:privateAccess Application.current.window.height = Std.int(Main.game.height * dpiScale);
+        #if (cpp && windows)
+        final dpiScale = FlxG.stage.window.display.dpi / 96.0;
+        FlxG.stage.window.width = Std.int(Main.game.width * dpiScale);
+        FlxG.stage.window.height = Std.int(Main.game.height * dpiScale);
 
-			Application.current.window.x = Std.int((Application.current.window.display.bounds.width - Application.current.window.width) / 2);
-			Application.current.window.y = Std.int((Application.current.window.display.bounds.height - Application.current.window.height) / 2);
-		}
+        FlxG.stage.window.x = Std.int((FlxG.stage.window.display.bounds.width - FlxG.stage.window.width) * 0.5);
+        FlxG.stage.window.y = Std.int((FlxG.stage.window.display.bounds.height - FlxG.stage.window.height) * 0.5);
 
-		untyped __cpp__('
-			getHandle();
-			if (curHandle != (HWND)0) {
-				HDC curHDC = GetDC(curHandle);
-				RECT curRect;
-				GetClientRect(curHandle, &curRect);
-				FillRect(curHDC, &curRect, (HBRUSH)GetStockObject(BLACK_BRUSH));
-				ReleaseDC(curHandle, curHDC);
-			}
-		');
-		#end
-	}
+        untyped __cpp__('
+            HWND hwnd = GetActiveWindow();
+            if (hwnd)
+			{
+                HDC hdc = GetDC(hwnd);
+                if (hdc)
+				{
+                    RECT rect;
+
+                    if (GetClientRect(hwnd, &rect)) FillRect(hdc, &rect, (HBRUSH)GetStockObject(BLACK_BRUSH));
+                    ReleaseDC(hwnd, hdc);
+                }
+            }
+        ');
+        #end
+    }
+
+    public static function windowAlert(?type:MessageBoxType = INFORMATION, message:String = '', title:String = ''):Int
+    {
+        #if (cpp && windows)
+        return untyped __cpp__('windowAlertImpl({0}, {1}.c_str(), {2}.c_str())', type, message, title);
+        #else
+        return FlxG.stage.window.alert(message, title);
+        #end
+    }
 }

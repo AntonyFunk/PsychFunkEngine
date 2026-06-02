@@ -1,16 +1,15 @@
-# Friday Night Funkin': Psych Engine Mint
+# Friday Night Funkin': Psych Funk Engine
 
 ![Logo](docs/img/PsychEngineMint.png)
 
-[Join the Discord!](https://discord.gg/nGcTH6vNVR)
+This is a fork created to expand the functionality, keeping it up-to-date and being mod compatible with the original engine (it doesn't go the other way around, of course).
 
-This is a Friday Night Funkin: Psych Engine fork created to expand on the engine's functionality, keeping it up-to-date and being mod compatible with the original engine (it doesn't go the other way around, of course).
-
-Built on Psych Engine version **1.0.4**.
-
+Built on Psych Engine Mint version **0.0.5**.
 
 ## Features
 
 See this fork's changelog [here](/docs/CHANGELOG.md)!
 
 See a rundown of this engine's features [here](/docs/FEATURES.md)!
+
+See a rundown of this engine's funk features [here](/docs/ADVANCED.md)!

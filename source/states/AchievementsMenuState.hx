@@ -21,9 +21,10 @@ class AchievementsMenuState extends ScriptedState
 
 	var MAX_PER_ROW:Int = 4;
 
-	override function create() {	
-		Paths.clearStoredMemory();
-		Paths.clearUnusedMemory();
+	override function create()
+	{	
+		FunkinAssets.cache.clearStoredMemory();
+		FunkinAssets.cache.clearUnusedMemory();
 		
 		rpcDetails = 'Achievements Menu';
 		
@@ -58,7 +59,7 @@ class AchievementsMenuState extends ScriptedState
 			{
 				#if MODS_ALLOWED Mods.currentModDirectory = option.mod; #end
 				var image:String = 'achievements/' + option.name;
-				if(Paths.fileExists('images/$image-pixel.png', IMAGE))
+				if(Paths.fileExists('images/$image-pixel.png'))
 				{
 					graphic = Paths.image('$image-pixel');
 					hasAntialias = false;

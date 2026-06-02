@@ -44,6 +44,7 @@ class Note extends FlxSprite
 		'', //Always leave this one empty pls
 		'Alt Animation',
 		'Hey!',
+		'Cheer!',
 		'Hurt Note',
 		'GF Sing',
 		'No Animation'
@@ -347,12 +348,14 @@ class Note extends FlxSprite
 			skinPostfix = getNoteSkinPostfix();
 			checkSkin = path + skinPostfix;
 			
-			if (!Paths.fileExists('images/$checkSkin.png', IMAGE)) {
+			if (!Paths.fileExists('images/$checkSkin.png'))
+			{
 				skinPostfix = '';
 				checkSkin = path;
 			}
 			
-			if (Paths.fileExists('images/$checkSkin.png', IMAGE)) {
+			if (Paths.fileExists('images/$checkSkin.png'))
+			{
 				validSkin = path;
 				break;
 			}
@@ -474,13 +477,13 @@ class Note extends FlxSprite
 		distance = getDistance(strumTime - Conductor.songPosition, noteSpeed);
 		var scrollMult:Int = (myStrum.downScroll ? -1 : 1);
 		
-		if(copyAlpha)
+		if (copyAlpha)
 			alpha = myStrum.alpha * multAlpha;
 		
 		var angleDir:Float = strumDir * Math.PI / 180;
-		if(copyX)
+		if (copyX)
 			x = myStrum.x + offsetX + Math.cos(angleDir) * distance;
-		if(copyY)
+		if (copyY)
 			y = myStrum.y + offsetY + Math.sin(angleDir) * distance * scrollMult;
 		if (copyAngle)
 			angle = (isSustainNote ? strumDir - 90 : myStrum.angle) + offsetAngle;
@@ -488,11 +491,14 @@ class Note extends FlxSprite
 		if (isSustainNote)
 			updateSustain(myStrum, noteSpeed);
 	}
-	public function updateSustain(myStrum:StrumNote, noteSpeed:Float = 1) {
-		if (!isSustainEnd) {
+	public function updateSustain(myStrum:StrumNote, noteSpeed:Float = 1)
+	{
+		if (!isSustainEnd)
+		{
 			scale.y = Note.getDistance(sustainLength, noteSpeed) / frameHeight;
 			updateHitbox();
 		}
+		
 		origin.set(frameWidth * .5, 0);
 		offset.set();
 		
@@ -508,7 +514,8 @@ class Note extends FlxSprite
 
 	public function clipToStrumNote(myStrum:StrumNote)
 	{
-		if ((mustPress || !ignoreNote) && wasGoodHit) {
+		if ((mustPress || !ignoreNote) && wasGoodHit)
+		{
 			var clipDistance:Float = Math.max(-distance, 0);
 			clipRect ??= new FlxRect(0, 0, frameWidth);
 			

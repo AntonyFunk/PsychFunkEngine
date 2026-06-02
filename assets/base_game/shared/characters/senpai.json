@@ -1,78 +1,66 @@
 {
 	"animations": [
 		{
-			"offsets": [
-				1,
-				0
-			],
+			"renderType": "sparrow",
 			"loop": false,
-			"anim": "idle",
+			"offsets": [0, 0],
 			"fps": 24,
-			"name": "Senpai Idle",
+			"anim": "idle",
+			"indices": [],
+			"name": "Senpai Idle"
+		},
+		{
+			"renderType": "sparrow",
+			"loop": false,
+			"offsets": [2, 6],
+			"anim": "singUP",
+			"fps": 24,
+			"name": "SENPAI UP NOTE",
 			"indices": []
 		},
 		{
-			"offsets": [
-				5,
-				37
-			],
+			"renderType": "sparrow",
 			"loop": false,
-			"fps": 24,
-			"anim": "singUP",
-			"indices": [],
-			"name": "SENPAI UP NOTE"
-		},
-		{
-			"offsets": [
-				0,
-				0
-			],
-			"loop": false,
-			"fps": 24,
+			"offsets": [0, 0],
 			"anim": "singRIGHT",
-			"indices": [],
-			"name": "SENPAI RIGHT NOTE"
+			"fps": 24,
+			"name": "SENPAI RIGHT NOTE",
+			"indices": []
 		},
 		{
-			"offsets": [
-				40,
-				0
-			],
+			"renderType": "sparrow",
 			"loop": false,
-			"fps": 24,
+			"offsets": [5, 0],
 			"anim": "singLEFT",
-			"indices": [],
-			"name": "SENPAI LEFT NOTE"
+			"fps": 24,
+			"name": "SENPAI LEFT NOTE",
+			"indices": []
 		},
 		{
-			"offsets": [
-				14,
-				0
-			],
+			"renderType": "sparrow",
 			"loop": false,
-			"fps": 24,
+			"offsets": [2, 0],
 			"anim": "singDOWN",
-			"indices": [],
-			"name": "SENPAI DOWN NOTE"
+			"fps": 24,
+			"name": "SENPAI DOWN NOTE",
+			"indices": []
 		}
 	],
-	"no_antialiasing": true,
+	"vocals_file": "",
 	"image": "characters/senpai",
-	"position": [
-		150,
-		360
-	],
+	"position": [-150, -140],
+	"death": {
+		"delay": 0,
+		"confirm_delay": 0.7,
+		"camera_position": [0, 0],
+		"camera_zoom": 1
+	},
 	"healthicon": "senpai-pixel",
 	"flip_x": false,
-	"healthbar_colors": [
-		255,
-		170,
-		111
-	],
-	"camera_position": [
-		-240,
-		-330
-	],
+	"healthbar_colors": [255, 170, 111],
+	"antialiasing": false,
+	"camera_position": [90, 80],
 	"sing_duration": 4,
-	"scale": 6
+	"scale": 6,
+	"_editor_isPlayer": false
 }

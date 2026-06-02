@@ -1,13 +1,22 @@
 package states.stages;
 
-import flixel.addons.effects.FlxTrail;
-import states.stages.objects.*;
-import substates.GameOverSubstate;
-import cutscenes.DialogueBox;
 import openfl.utils.Assets as OpenFlAssets;
+
+import flixel.addons.effects.FlxTrail;
+
+import shaders.WiggleEffect;
+import cutscenes.DialogueBox;
+import substates.GameOverSubstate;
+import states.stages.objects.*;
+
 
 class SchoolEvil extends BaseStage
 {
+	var wiggleBack = null;
+	var wiggleSchool = null;
+	var wiggleGround = null;
+	var wiggleTrees = null;
+
 	override function create()
 	{
 		var _song = PlayState.SONG;
@@ -15,19 +24,40 @@ class SchoolEvil extends BaseStage
 		if(_song.gameOverLoop == null || _song.gameOverLoop.trim().length < 1) GameOverSubstate.loopSoundName = 'gameOver-pixel';
 		if(_song.gameOverEnd == null || _song.gameOverEnd.trim().length < 1) GameOverSubstate.endSoundName = 'gameOverEnd-pixel';
 		if(_song.gameOverChar == null || _song.gameOverChar.trim().length < 1) GameOverSubstate.characterName = 'bf-pixel-dead';
-		
-		var posX = 400;
-		var posY = 200;
 
-		var bg:BGSprite;
-		if(!ClientPrefs.data.lowQuality)
-			bg = new BGSprite('weeb/animatedEvilSchool', posX, posY, 0.8, 0.9, ['background 2'], true);
-		else
-			bg = new BGSprite('weeb/animatedEvilSchool_low', posX, posY, 0.8, 0.9);
+		wiggleBack = new WiggleEffect(2 * 0.8, 4 * 0.4, 0.011, WiggleEffectType.DREAMY);
+		wiggleSchool = new WiggleEffect(2, 4, 0.017, WiggleEffectType.DREAMY);
+		wiggleGround = new WiggleEffect(2, 4, 0.007, WiggleEffectType.DREAMY);
+		wiggleTrees = new WiggleEffect(2, 4, 0.007, WiggleEffectType.DREAMY);
 
-		bg.scale.set(PlayState.daPixelZoom, PlayState.daPixelZoom);
-		bg.antialiasing = false;
-		add(bg);
+		var bgBackTrees:BGSprite = new BGSprite('weeb/evil/weebBackTrees', -842, -80, 0.5, 0.5);
+		bgBackTrees.antialiasing = false;
+		bgBackTrees.scale.set(6, 6);
+		bgBackTrees.updateHitbox();
+		bgBackTrees.shader = wiggleBack;
+		add(bgBackTrees);
+
+		var bgSchool:BGSprite = new BGSprite('weeb/evil/weebSchool', -816, -38, 0.75, 0.75);
+		bgSchool.antialiasing = false;
+		bgSchool.scale.set(6, 6);
+		bgSchool.updateHitbox();
+		bgSchool.shader = wiggleSchool;
+		add(bgSchool);
+
+		var bgStreet:BGSprite = new BGSprite('weeb/evil/weebStreet', -662, 6, 1, 1);
+		bgStreet.antialiasing = false;
+		bgStreet.scale.set(6, 6);
+		bgStreet.updateHitbox();
+		bgStreet.shader = wiggleGround;
+		add(bgStreet);
+
+		var bgTrees:BGSprite = new BGSprite('weeb/evil/weebTrees', -662, 6, 1, 1);
+		bgTrees.antialiasing = false;
+		bgTrees.scale.set(6, 6);
+		bgTrees.updateHitbox();
+		bgTrees.shader = wiggleTrees;
+		add(bgTrees);
+
 		setDefaultGF('gf-pixel');
 
 		FlxG.sound.playMusic(Paths.music('LunchboxScary'), 0);
@@ -39,8 +69,22 @@ class SchoolEvil extends BaseStage
 	}
 	override function createPost()
 	{
-		var trail:FlxTrail = new FlxTrail(dad, null, 4, 24, 0.3, 0.069);
-		addBehindDad(trail);
+		if (!ClientPrefs.data.lowQuality)
+		{
+			var trail:FlxTrail = new FlxTrail(dad, null, 4, 24, 0.3, 0.069);
+			addBehindDad(trail);
+		}
+	}
+
+	override function update(elapsed:Float)
+	{
+		if (wiggleBack != null)
+		{
+			wiggleBack.update(elapsed);
+			wiggleSchool.update(elapsed);
+			wiggleGround.update(elapsed);
+			wiggleTrees.update(elapsed);
+		}
 	}
 
 	// Ghouls event
@@ -66,9 +110,9 @@ class SchoolEvil extends BaseStage
 				if (!ClientPrefs.data.lowQuality) {
 					bgGhouls = new BGSprite('weeb/bgGhouls', -100, 190, 0.9, 0.9, ['BG freaks glitch instance'], false);
 					bgGhouls.setGraphicSize(Std.int(bgGhouls.width * PlayState.daPixelZoom));
+					bgGhouls.updateHitbox();
 					bgGhouls.antialiasing = false;
 					bgGhouls.visible = false;
-					bgGhouls.updateHitbox();
 					
 					bgGhouls.animation.onFinish.add(function(name:String) {
 						if (name == 'BG freaks glitch instance')

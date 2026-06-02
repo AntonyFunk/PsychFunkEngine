@@ -1,0 +1,177 @@
+{
+	"animations": {
+		"blue2": {
+			"noteData": 1,
+			"offsets": [
+				-41,
+				-43
+			],
+			"fps": [
+				31,
+				35
+			],
+			"prefix": "blue2",
+			"name": "blue2",
+			"indices": []
+		},
+		"green3": {
+			"noteData": 2,
+			"offsets": [
+				-41,
+				-43
+			],
+			"fps": [
+				31,
+				35
+			],
+			"prefix": "green3",
+			"name": "green3",
+			"indices": []
+		},
+		"blue3": {
+			"noteData": 1,
+			"offsets": [
+				-41,
+				-43
+			],
+			"fps": [
+				31,
+				35
+			],
+			"prefix": "blue3",
+			"name": "blue3",
+			"indices": []
+		},
+		"blue": {
+			"noteData": 1,
+			"offsets": [
+				-41,
+				-43
+			],
+			"fps": [
+				31,
+				35
+			],
+			"prefix": "blue1",
+			"name": "blue1",
+			"indices": []
+		},
+		"green": {
+			"noteData": 2,
+			"offsets": [
+				-41,
+				-43
+			],
+			"fps": [
+				31,
+				35
+			],
+			"prefix": "green1",
+			"name": "green1",
+			"indices": []
+		},
+		"orange2": {
+			"noteData": 3,
+			"offsets": [
+				-41,
+				-43
+			],
+			"fps": [
+				31,
+				35
+			],
+			"prefix": "orange2",
+			"name": "orange2",
+			"indices": []
+		},
+		"purple": {
+			"noteData": 0,
+			"offsets": [
+				-41,
+				-43
+			],
+			"fps": [
+				31,
+				35
+			],
+			"prefix": "purple1",
+			"name": "purple1",
+			"indices": []
+		},
+		"orange3": {
+			"noteData": 3,
+			"offsets": [
+				-41,
+				-43
+			],
+			"fps": [
+				31,
+				35
+			],
+			"prefix": "orange3",
+			"name": "orange3",
+			"indices": []
+		},
+		"orange": {
+			"noteData": 3,
+			"offsets": [
+				-41,
+				-43
+			],
+			"fps": [
+				31,
+				35
+			],
+			"prefix": "orange1",
+			"name": "orange1",
+			"indices": []
+		},
+		"purple2": {
+			"noteData": 0,
+			"offsets": [
+				-41,
+				-43
+			],
+			"fps": [
+				31,
+				35
+			],
+			"prefix": "purple2",
+			"name": "purple2",
+			"indices": []
+		},
+		"green2": {
+			"noteData": 6,
+			"offsets": [
+				-41,
+				-43
+			],
+			"fps": [
+				31,
+				35
+			],
+			"prefix": "green2",
+			"name": "green2",
+			"indices": []
+		},
+		"purple3": {
+			"prefix": "purple3",
+			"offsets": [
+				-41,
+				-43
+			],
+			"indices": [],
+			"fps": [
+				31,
+				35
+			],
+			"name": "purple3",
+			"noteData": 0
+		}
+	},
+	"allowRGB": false,
+	"allowPixel": false,
+	"rgb": null,
+	"blendMode": "screen",
+	"scale": 4
+}

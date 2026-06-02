@@ -18,11 +18,13 @@ class PsychUIRadioGroup extends FlxSpriteGroup
 
 	public var checked(default, set):Int = -1;
 	public var checkedRadio(default, set):PsychUIRadioItem;
+	public var allowUncheck:Bool = false;
 
 	public var arrowUp:FlxSprite;
 	public var arrowDown:FlxSprite;
 
 	public var onClick:Void->Void;
+	public var onScroll:Void->Void;
 
 	var _hitbox:FlxObject;
 	public function new(x:Float, y:Float, labels:Array<String>, space:Float = 25, maxItems:Int = 0, ?isHorizontal:Bool = false, ?textWidth:Int = 100)
@@ -60,6 +62,7 @@ class PsychUIRadioGroup extends FlxSpriteGroup
 		if(maxItems > 0 && maxItems < labels.length && FlxG.mouse.wheel != 0 && FlxG.mouse.overlaps(_hitbox, camera))
 		{
 			curScroll -= FlxG.mouse.wheel;
+			if (onScroll != null) onScroll();
 			//trace('just scrolled: ' + FlxG.mouse.wheel);
 		}
 
@@ -84,7 +87,7 @@ class PsychUIRadioGroup extends FlxSpriteGroup
 				arrowDown.x += arrowUp.width + 8;
 		}
 
-		if(FlxG.mouse.justPressed)
+		if(FlxG.mouse.justPressed && PsychUIDropDownMenu.focusOn != null)
 		{
 			if(hasArrowUp && maxItems > 0 && curScroll > 0 && FlxG.mouse.overlaps(arrowUp, camera))
 			{
@@ -308,7 +311,9 @@ class PsychUIRadioGroup extends FlxSpriteGroup
 	{
 		var radio:PsychUIRadioItem = cast recycle(PsychUIRadioItem);
 		radio.onClick = function() {
-			checkedRadio = radio;
+			if (allowUncheck && checkedRadio == radio) checked = -1;
+			else checkedRadio = radio;
+			
 			if(onClick != null) onClick();
 			if(broadcastRadioGroupEvent) PsychUIEventHandler.event(CLICK_EVENT, this);
 		};

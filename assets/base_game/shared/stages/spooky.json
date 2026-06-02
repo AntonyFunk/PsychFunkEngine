@@ -1,26 +1,105 @@
 {
-	"directory": "week2",
-	"defaultZoom": 1.05,
-	"stageUI": "",
-
-	"boyfriend": [770, 100],
-	"girlfriend": [400, 130],
-	"opponent": [100, 100],
-	"hide_girlfriend": false,
-
-	"camera_boyfriend": [0, 0],
-	"camera_opponent": [0, 0],
-	"camera_girlfriend": [0, 0],
-	"camera_speed": 1,
-
-	"preload": {
-		"images/halloween_bg": 2,
-		"images/halloween_bg_low": 1
-	},
-
+	"camera_boyfriend": [
+		0,
+		0
+	],
 	"_editorMeta": {
-		"dad": "spooky",
 		"boyfriend": "bf",
-		"gf": "gf"
-	}
+		"gf": "gf",
+		"dad": "spooky"
+	},
+	"girlfriend": [
+		400,
+		130
+	],
+	"stageUI": "",
+	"boyfriend": [
+		770,
+		100
+	],
+	"objects": [
+		{
+			"x": -395,
+			"y": -505,
+			"scale": [
+				1,
+				1
+			],
+			"zoomFactor": 1,
+			"image": "halloween_bg",
+			"flipX": false,
+			"color": "FFFFFF",
+			"filters": 3,
+			"angle": 0,
+			"name": "halloweenBG",
+			"firstAnimation": "idle",
+			"antialiasing": true,
+			"flipY": false,
+			"scroll": [
+				1,
+				1
+			],
+			"alpha": 1,
+			"animations": [
+				{
+					"animType": "framelabel",
+					"image": "",
+					"offsets": [
+						0,
+						0
+					],
+					"indices": [],
+					"renderType": "animateatlas",
+					"fps": 24,
+					"flipX": false,
+					"flipY": false,
+					"anim": "idle",
+					"loop": false,
+					"name": "static"
+				},
+				{
+					"animType": "framelabel",
+					"image": "",
+					"offsets": [
+						0,
+						0
+					],
+					"indices": [],
+					"renderType": "animateatlas",
+					"fps": 24,
+					"flipX": false,
+					"flipY": false,
+					"anim": "lightning",
+					"loop": false,
+					"name": "thunder"
+				}
+			],
+			"type": "animatedSprite"
+		},
+		{
+			"type": "gf"
+		},
+		{
+			"type": "dad"
+		},
+		{
+			"type": "boyfriend"
+		}
+	],
+	"camera_girlfriend": [
+		0,
+		0
+	],
+	"defaultZoom": 1,
+	"camera_speed": 1,
+	"directory": "week2",
+	"opponent": [
+		100,
+		100
+	],
+	"camera_opponent": [
+		0,
+		0
+	],
+	"hide_girlfriend": false
 }

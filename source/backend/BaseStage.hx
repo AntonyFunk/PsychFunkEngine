@@ -62,10 +62,14 @@ class BaseStage extends FlxBasic
 		}
 	}
 
-	//main callbacks
+	// main callbacks
 	public function create() {}
 	public function createPost() {}
-	//public function update(elapsed:Float) {}
+
+	// stage callback
+	public function buildStage() {}
+	
+	// public function update(elapsed:Float) {}
 	public function countdownTick(count:Countdown, num:Int) {}
 	public function startSong() {}
 
@@ -111,7 +115,7 @@ class BaseStage extends FlxBasic
 	public function addBehindGF(obj:FlxBasic) return insert(members.indexOf(game.gfGroup), obj);
 	public function addBehindBF(obj:FlxBasic) return insert(members.indexOf(game.boyfriendGroup), obj);
 	public function addBehindDad(obj:FlxBasic) return insert(members.indexOf(game.dadGroup), obj);
-	public function setDefaultGF(name:String) //Fix for the Chart Editor on Base Game stages
+	public function setDefaultGF(name:String) // Fix for the Chart Editor on Base Game stages
 	{
 		var gfVersion:String = PlayState.SONG.gfVersion;
 		if(gfVersion == null || gfVersion.length < 1)
@@ -121,10 +125,12 @@ class BaseStage extends FlxBasic
 		}
 	}
 
-	public function getStageObject(name:String) //Objects can only be accessed *after* create(), use createPost() if you want to mess with them on init
-		return game.variables.get(name);
+	public function getStageObject(name:String):Dynamic
+	{
+		return MusicBeatState.getVariables().get(name);
+	}
 
-	//start/end callback functions
+	// Start/End callback functions
 	public function setStartCallback(myfn:Void->Void)
 	{
 		if(!onPlayState) return;

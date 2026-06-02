@@ -34,7 +34,7 @@ class PhillyBlazin extends BaseStage
 			spr.updateHitbox();
 		}
 
-		if(!ClientPrefs.data.lowQuality)
+		if (!ClientPrefs.data.lowQuality)
 		{
 			var skyImage = Paths.image('phillyBlazin/skyBlur');
 			scrollingSky = new FlxTiledSprite(skyImage, Std.int(skyImage.width * 1.1) + 475, Std.int(skyImage.height / 1.1), true, false);
@@ -58,7 +58,7 @@ class PhillyBlazin extends BaseStage
 		setupScale(phillyForegroundCity);
 		add(phillyForegroundCity);
 		
-		if(!ClientPrefs.data.lowQuality)
+		if (!ClientPrefs.data.lowQuality)
 		{
 			foregroundMultiply = new BGSprite('phillyBlazin/streetBlur', -600, -175, 0.0, 0.0);
 			setupScale(foregroundMultiply);
@@ -78,15 +78,13 @@ class PhillyBlazin extends BaseStage
 		abot = new ABotSpeaker(gfGroup.x, gfGroup.y + 550);
 		add(abot);
 		
-		if(ClientPrefs.data.shaders)
-			setupRainShader();
+		if (ClientPrefs.data.shaders) setupRainShader();
 
 		var _song = PlayState.SONG;
-		if(_song.gameOverSound == null || _song.gameOverSound.trim().length < 1) GameOverSubstate.deathSoundName = 'fnf_loss_sfx-pico-gutpunch';
-		if(_song.gameOverLoop == null || _song.gameOverLoop.trim().length < 1) GameOverSubstate.loopSoundName = 'gameOver-pico';
-		if(_song.gameOverEnd == null || _song.gameOverEnd.trim().length < 1) GameOverSubstate.endSoundName = 'gameOverEnd-pico';
-		if(_song.gameOverChar == null || _song.gameOverChar.trim().length < 1) GameOverSubstate.characterName = 'pico-blazin';
-		GameOverSubstate.deathDelay = 0.15;
+		if (_song.gameOverSound == null || _song.gameOverSound.trim().length < 1) GameOverSubstate.deathSoundName = 'fnf_loss_sfx-pico-gutpunch';
+		if (_song.gameOverLoop == null || _song.gameOverLoop.trim().length < 1) GameOverSubstate.loopSoundName = 'gameOver-pico';
+		if (_song.gameOverEnd == null || _song.gameOverEnd.trim().length < 1) GameOverSubstate.endSoundName = 'gameOverEnd-pico';
+		if (_song.gameOverChar == null || _song.gameOverChar.trim().length < 1) GameOverSubstate.characterName = 'pico-blazin';
 
 		setDefaultGF('nene');
 		precache();
@@ -117,17 +115,17 @@ class PhillyBlazin extends BaseStage
 
 		for (character in boyfriendGroup.members)
 		{
-			if(character == null) continue;
+			if (character == null) continue;
 			character.color = 0xFFDEDEDE;
 		}
 		for (character in dadGroup.members)
 		{
-			if(character == null) continue;
+			if (character == null) continue;
 			character.color = 0xFFDEDEDE;
 		}
 		for (character in gfGroup.members)
 		{
-			if(character == null) continue;
+			if (character == null) continue;
 			character.color = 0xFF888888;
 		}
 		abot.color = 0xFF888888;
@@ -135,24 +133,25 @@ class PhillyBlazin extends BaseStage
 		var unspawnNotes:Array<Note> = cast game.unspawnNotes;
 		for (note in unspawnNotes)
 		{
-			if(note == null) continue;
+			if (note == null) continue;
 
 			//override animations for note types
 			note.noAnimation = true;
 			note.noMissAnimation = true;
 		}
-		remove(dadGroup, true);
-		addBehindBF(dadGroup);
+
+		PicoBlazinHandler.init();
+		DarnellBlazinHandler.init();
 	}
 
 	override function beatHit()
 	{
-		//if(curBeat % 2 == 0) abot.beatHit();
+		if (abot != null && abot.snd != null) abot.beatHit();
 	}
 	
 	override function startSong()
 	{
-		abot.snd = FlxG.sound.music;
+		if (abot != null) abot.snd = FlxG.sound.music;
 	}
 
 	function setupRainShader()
@@ -234,34 +233,33 @@ class PhillyBlazin extends BaseStage
 	}
 
 	// Note functions
-	var picoFight:PicoBlazinHandler = new PicoBlazinHandler();
-	var darnellFight:DarnellBlazinHandler = new DarnellBlazinHandler();
 	override function goodNoteHit(note:Note)
 	{
 		//trace('hit note! ${note.noteType}');
 		rainTimeScale += 0.7;
-		picoFight.noteHit(note);
-		darnellFight.noteHit(note);
+
+		PicoBlazinHandler.noteHit(note);
+		DarnellBlazinHandler.noteHit(note);
 	}
 	override function noteMiss(note:Note)
 	{
 		//trace('missed note!');
-		picoFight.noteMiss(note);
-		darnellFight.noteMiss(note);
+		PicoBlazinHandler.noteMiss(note);
+		DarnellBlazinHandler.noteMiss(note);
 	}
 
 	override function noteMissPress(direction:Int)
 	{
 		//trace('misinput!');
-		picoFight.noteMissPress(direction);
-		darnellFight.noteMissPress(direction);
+		PicoBlazinHandler.noteMissPress(direction);
+		DarnellBlazinHandler.noteMissPress(direction);
 	}
 
 	// Darnell Note functions
 	override function opponentNoteHit(note:Note)
 	{
 		//trace('opponent hit!');
-		picoFight.noteMiss(note);
-		darnellFight.noteMiss(note);
+		PicoBlazinHandler.noteMiss(note);
+		DarnellBlazinHandler.noteMiss(note);
 	}
 }

@@ -3,147 +3,171 @@
 		{
 			"offsets": [0, 0],
 			"loop": true,
+			"renderType": "animateatlas",
 			"anim": "idle",
 			"name": "Darnell Fighting ALL ANIMS",
-			"indices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+			"indices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+			"animType": "symbol"
 		},
 		{
 			"offsets": [0, 0],
-			"indices": [14, 15, 16, 17, 18],
-			"fps": 0,
+			"loop": false,
+			"renderType": "animateatlas",
 			"anim": "uppercutPrep",
-			"loop": false,
-			"name": "Darnell Fighting ALL ANIMS"
+			"indices": [14, 15, 16, 17, 18],
+			"name": "Darnell Fighting ALL ANIMS",
+			"animType": "symbol"
 		},
 		{
 			"offsets": [0, 0],
-			"indices": [19, 20, 21, 22, 23],
-			"fps": 0,
+			"loop": false,
+			"renderType": "animateatlas",
 			"anim": "uppercut",
-			"loop": false,
-			"name": "Darnell Fighting ALL ANIMS"
+			"indices": [19, 20, 21, 22, 23],
+			"name": "Darnell Fighting ALL ANIMS",
+			"animType": "symbol"
 		},
 		{
 			"offsets": [0, 0],
-			"indices": [24, 25, 26, 27, 28],
-			"fps": 0,
+			"loop": false,
+			"renderType": "animateatlas",
 			"anim": "fakeout",
-			"loop": false,
-			"name": "Darnell Fighting ALL ANIMS"
+			"indices": [24, 25, 26, 27, 28],
+			"name": "Darnell Fighting ALL ANIMS",
+			"animType": "symbol"
 		},
 		{
 			"offsets": [0, 0],
-			"indices": [29, 30, 31, 32],
-			"fps": 0,
+			"loop": false,
+			"renderType": "animateatlas",
 			"anim": "block",
-			"loop": false,
-			"name": "Darnell Fighting ALL ANIMS"
+			"indices": [29, 30, 31, 32],
+			"name": "Darnell Fighting ALL ANIMS",
+			"animType": "symbol"
 		},
 		{
 			"offsets": [0, 0],
-			"indices": [33, 34, 35, 36, 37],
-			"fps": 0,
+			"loop": false,
+			"renderType": "animateatlas",
 			"anim": "punchHigh1",
-			"loop": false,
-			"name": "Darnell Fighting ALL ANIMS"
+			"indices": [33, 34, 35, 36, 37],
+			"name": "Darnell Fighting ALL ANIMS",
+			"animType": "symbol"
 		},
 		{
 			"offsets": [0, 0],
-			"indices": [48, 49, 50, 51, 52],
-			"fps": 0,
+			"loop": false,
+			"renderType": "animateatlas",
 			"anim": "punchLow1",
-			"loop": false,
-			"name": "Darnell Fighting ALL ANIMS"
+			"indices": [48, 49, 50, 51, 52],
+			"name": "Darnell Fighting ALL ANIMS",
+			"animType": "symbol"
 		},
 		{
 			"offsets": [0, 0],
-			"indices": [53, 54, 55, 56, 57],
-			"fps": 0,
+			"loop": false,
+			"renderType": "animateatlas",
 			"anim": "dodge",
-			"loop": false,
-			"name": "Darnell Fighting ALL ANIMS"
+			"indices": [53, 54, 55, 56, 57],
+			"name": "Darnell Fighting ALL ANIMS",
+			"animType": "symbol"
 		},
 		{
 			"offsets": [0, 0],
-			"indices": [58, 59, 60, 61, 62],
-			"fps": 0,
+			"loop": false,
+			"renderType": "animateatlas",
 			"anim": "hitHigh",
-			"loop": false,
-			"name": "Darnell Fighting ALL ANIMS"
+			"indices": [58, 59, 60, 61, 62],
+			"name": "Darnell Fighting ALL ANIMS",
+			"animType": "symbol"
 		},
 		{
 			"offsets": [0, 0],
-			"indices": [63, 64, 65, 66],
-			"fps": 0,
+			"loop": false,
+			"renderType": "animateatlas",
 			"anim": "hitLow",
-			"loop": false,
-			"name": "Darnell Fighting ALL ANIMS"
+			"indices": [63, 64, 65, 66],
+			"name": "Darnell Fighting ALL ANIMS",
+			"animType": "symbol"
 		},
 		{
 			"offsets": [0, 0],
-			"indices": [67, 68, 69, 70],
-			"fps": 0,
+			"loop": false,
+			"renderType": "animateatlas",
 			"anim": "cringe",
-			"loop": false,
-			"name": "Darnell Fighting ALL ANIMS"
+			"indices": [67, 68, 69, 70],
+			"name": "Darnell Fighting ALL ANIMS",
+			"animType": "symbol"
 		},
 		{
 			"offsets": [0, 0],
-			"indices": [74, 75, 76, 77, 78],
-			"fps": 0,
+			"loop": false,
+			"renderType": "animateatlas",
 			"anim": "pissed",
-			"loop": false,
-			"name": "Darnell Fighting ALL ANIMS"
+			"indices": [74, 75, 76, 77, 78],
+			"name": "Darnell Fighting ALL ANIMS",
+			"animType": "symbol"
 		},
 		{
 			"offsets": [0, 0],
-			"indices": [79, 80, 81, 82, 83, 84, 85, 86, 87, 88],
-			"fps": 0,
+			"loop": false,
+			"renderType": "animateatlas",
 			"anim": "uppercutHit",
-			"loop": false,
-			"name": "Darnell Fighting ALL ANIMS"
+			"indices": [79, 80, 81, 82, 83, 84, 85, 86, 87, 88],
+			"name": "Darnell Fighting ALL ANIMS",
+			"animType": "symbol"
 		},
 		{
 			"offsets": [0, 0],
-			"indices": [21, 22, 23],
-			"fps": 0,
+			"loop": true,
+			"renderType": "animateatlas",
 			"anim": "uppercut-loop",
-			"loop": true,
-			"name": "Darnell Fighting ALL ANIMS"
+			"indices": [21, 22, 23],
+			"name": "Darnell Fighting ALL ANIMS",
+			"animType": "symbol"
 		},
 		{
 			"offsets": [0, 0],
-			"indices": [71, 72, 73],
-			"fps": 0,
+			"loop": true,
+			"renderType": "animateatlas",
 			"anim": "hitSpin",
-			"loop": true,
-			"name": "Darnell Fighting ALL ANIMS"
+			"indices": [71, 72, 73],
+			"name": "Darnell Fighting ALL ANIMS",
+			"animType": "symbol"
 		},
 		{
 			"offsets": [0, 0],
-			"indices": [38, 39, 40, 41, 42],
-			"fps": 0,
+			"loop": false,
+			"renderType": "animateatlas",
 			"anim": "punchHigh2",
-			"loop": false,
-			"name": "Darnell Fighting ALL ANIMS"
+			"indices": [38, 39, 40, 41, 42],
+			"name": "Darnell Fighting ALL ANIMS",
+			"animType": "symbol"
 		},
 		{
 			"offsets": [0, 0],
-			"indices": [43, 44, 45, 46, 47],
-			"fps": 0,
-			"anim": "punchLow2",
 			"loop": false,
-			"name": "Darnell Fighting ALL ANIMS"
+			"renderType": "animateatlas",
+			"anim": "punchLow2",
+			"indices": [43, 44, 45, 46, 47],
+			"name": "Darnell Fighting ALL ANIMS",
+			"animType": "symbol"
 		}
 	],
 	"vocals_file": "",
-	"no_antialiasing": false,
 	"image": "characters/darnellBlazin",
-	"position": [400, 650],
+	"position": [-400, -230],
+	"death": {
+		"delay": 0,
+		"confirm_delay": 0.7,
+		"camera_position": [0, 0],
+		"camera_zoom": 1
+	},
 	"healthicon": "darnell",
 	"flip_x": false,
 	"healthbar_colors": [115, 94, 176],
-	"camera_position": [-150, 100],
+	"antialiasing": true,
+	"camera_position": [50, 50],
 	"sing_duration": 6.1,
 	"scale": 1.75,
 	"_editor_isPlayer": false

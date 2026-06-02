@@ -2,22 +2,12 @@ package states.stages;
 
 class Spooky extends BaseStage
 {
-	var halloweenBG:BGSprite;
-	var halloweenWhite:BGSprite;
 	override function create()
 	{
-		if(!ClientPrefs.data.lowQuality) {
-			halloweenBG = new BGSprite('halloween_bg', -200, -100, ['halloweem bg0', 'halloweem bg lightning strike']);
-		} else {
-			halloweenBG = new BGSprite('halloween_bg_low', -200, -100);
-		}
-		add(halloweenBG);
+		// PRECACHE SOUNDS
+		for (i in 1...2) Paths.sound('thunder_$i');
 
-		//PRECACHE SOUNDS
-		Paths.sound('thunder_1');
-		Paths.sound('thunder_2');
-
-		//Monster cutscene
+		// Monster cutscene
 		if (isStoryMode && !seenCutscene)
 		{
 			switch(songName)
@@ -27,10 +17,16 @@ class Spooky extends BaseStage
 			}
 		}
 	}
-	override function createPost()
+
+	var halloweenWhite:FunkinSprite;
+	override function buildStage()
 	{
-		halloweenWhite = new BGSprite(null, -800, -400, 0, 0);
-		halloweenWhite.makeGraphic(Std.int(FlxG.width * 2), Std.int(FlxG.height * 2), FlxColor.WHITE);
+		halloweenWhite = new FunkinSprite().makeGraphic(1, 1, FlxColor.WHITE);
+		halloweenWhite.antialiasing = false;
+		halloweenWhite.scrollFactor.set();
+		halloweenWhite.zoomFactor = 0;
+		halloweenWhite.scale.set(FlxG.width, FlxG.height);
+		halloweenWhite.updateHitbox();
 		halloweenWhite.alpha = 0;
 		halloweenWhite.blend = ADD;
 		add(halloweenWhite);
@@ -49,31 +45,27 @@ class Spooky extends BaseStage
 	function lightningStrikeShit():Void
 	{
 		FlxG.sound.play(Paths.soundRandom('thunder_', 1, 2));
-		if(!ClientPrefs.data.lowQuality) halloweenBG.animation.play('halloweem bg lightning strike');
+		getStageObject('halloweenBG').playAnim('lightning', true);
 
 		lightningStrikeBeat = curBeat;
 		lightningOffset = FlxG.random.int(8, 24);
 
-		if(boyfriend.hasAnimation('scared'))
-			boyfriend.playAnim('scared', true);
+		for (char in [boyfriend, dad, gf])
+			if (char != null) char.playAnim('scared', true);
 
-		if(dad.hasAnimation('scared'))
-			dad.playAnim('scared', true);
-
-		if(gf != null && gf.hasAnimation('scared'))
-			gf.playAnim('scared', true);
-
-		if(ClientPrefs.data.camZooms) {
+		if (ClientPrefs.data.camZooms) {
 			FlxG.camera.zoom += 0.015;
 			camHUD.zoom += 0.03;
 
-			if(!game.camZooming) { //Just a way for preventing it to be permanently zoomed until Skid & Pump hits a note
+			if (!game.camZooming) // Just a way for preventing it to be permanently zoomed until Skid & Pump hits a note
+			{
 				FlxTween.tween(FlxG.camera, {zoom: defaultCamZoom}, 0.5);
 				FlxTween.tween(camHUD, {zoom: 1}, 0.5);
 			}
 		}
 
-		if(ClientPrefs.data.flashing) {
+		if (ClientPrefs.data.flashing)
+		{
 			halloweenWhite.alpha = 0.4;
 			FlxTween.tween(halloweenWhite, {alpha: 0.5}, 0.075);
 			FlxTween.tween(halloweenWhite, {alpha: 0}, 0.25, {startDelay: 0.15});

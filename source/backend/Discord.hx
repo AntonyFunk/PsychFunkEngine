@@ -17,7 +17,7 @@ import flixel.util.FlxStringUtil;
 class DiscordClient
 {
 	public static var isInitialized:Bool = false;
-	private inline static final _defaultID:String = "1425926071852859455";
+	private inline static final _defaultID:String = "1401615510973452348";
 	public static var clientID(default, set):String = _defaultID;
 	private static var presence:DiscordPresence = new DiscordPresence();
 	// hides this field from scripts and reflection in general
@@ -55,11 +55,16 @@ class DiscordClient
 			message += '($user#$discriminator)';
 		else //New Discord IDs/Discriminator system
 			message += '($user)';
+
+		final button1:DiscordButton = new DiscordButton();
+		button1.label = "Download The Mod";
+		button1.url = "https://gamebanana.com/mods/586137";
+		presence.__presence.buttons[0] = button1;
 		
-		var button:DiscordButton = new DiscordButton();
-		button.url = 'https://gamebanana.com/mods/591796';
-		button.label = 'On GameBanana';
-		presence.__presence.buttons[0] = button;
+		final button2:DiscordButton = new DiscordButton();
+		button2.label = "Twitter Mod";
+		button2.url = "https://x.com/StreamNightFunk";
+		presence.__presence.buttons[1] = button2;
 
 		updatePresence();
 	}

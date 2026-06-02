@@ -136,14 +136,8 @@ class PhillyStreets extends BaseStage
 		updateABotEye(true);
 		add(abot);
 		
-		if(ClientPrefs.data.shaders)
-			setupRainShader();
+		if (ClientPrefs.data.shaders) setupRainShader();
 
-		var _song = PlayState.SONG;
-		if(_song.gameOverSound == null || _song.gameOverSound.trim().length < 1) GameOverSubstate.deathSoundName = 'fnf_loss_sfx-pico';
-		if(_song.gameOverLoop == null || _song.gameOverLoop.trim().length < 1) GameOverSubstate.loopSoundName = 'gameOver-pico';
-		if(_song.gameOverEnd == null || _song.gameOverEnd.trim().length < 1) GameOverSubstate.endSoundName = 'gameOverEnd-pico';
-		if(_song.gameOverChar == null || _song.gameOverChar.trim().length < 1) GameOverSubstate.characterName = 'pico-dead';
 		setDefaultGF('nene');
 		
 		if (isStoryMode)
@@ -396,7 +390,7 @@ class PhillyStreets extends BaseStage
 		else
 			abot.lookLeft();
 
-		if(finishInstantly) abot.eyes.anim.curAnim.curFrame = abot.eyes.anim.curAnim.numFrames - 1;
+		if (finishInstantly) abot.eyes.animation.curAnim.curFrame = abot.eyes.animation.numFrames;
 	}
 
 	override function startSong()
@@ -436,7 +430,7 @@ class PhillyStreets extends BaseStage
 		function createCan()
 		{
 			if(didCreateCan) return;
-			spraycan = new SpraycanAtlasSprite(spraycanPile.x + 530, spraycanPile.y - 240);
+			spraycan = new SpraycanAtlasSprite(spraycanPile.x + 10, spraycanPile.y - 550);
 			add(spraycan);
 
 			lightCanSnd = new FlxSound();
@@ -615,16 +609,16 @@ class PhillyStreets extends BaseStage
 
 		if (FlxG.random.bool(10) && curBeat != (lastChange + changeInterval) && carInterruptable == true)
 		{
-			if(lightsStop == false)
-				driveCar(phillyCars);
-			else
-				driveCarLights(phillyCars);
+			if (lightsStop == false) driveCar(phillyCars);
+			else driveCarLights(phillyCars);
 		}
 
 		if(FlxG.random.bool(10) && curBeat != (lastChange + changeInterval) && car2Interruptable == true && lightsStop == false)
 			driveCarBack(phillyCars2);
 
 		if (curBeat == (lastChange + changeInterval)) changeLights(curBeat);
+
+		if (abot != null && abot.snd != null) abot.beatHit();
 	}
 	
 	function changeLights(beat:Int):Void

@@ -311,8 +311,8 @@ class Tank extends BaseStage
 		cutsceneHandler.push(pico);
 
 		// prepare pico animation cycle
-		function picoStressCycle(anim:String) {
-			switch (anim) {
+		function picoStressCycle(animName:String) {
+			switch (animName) {
 				case "dieBitch", "GF Time to Die sequence":
 					pico.anim.play('picoAppears', true);
 					boyfriendGroup.alpha = 1;
@@ -329,11 +329,11 @@ class Tank extends BaseStage
 				case "picoEnd", "Pico Dual Wield on Speaker idle":
 					gfGroup.alpha = 1;
 					pico.visible = false;
-					if (pico.anim.onFinish.has(picoStressCycle)) // for safety
-						pico.anim.onFinish.remove(picoStressCycle);
+					if (pico.animation.onFinish.has(picoStressCycle)) // for safety
+						pico.animation.onFinish.remove(picoStressCycle);
 			}
 		}
-		pico.anim.onFinish.add(picoStressCycle);
+		pico.animation.onFinish.add(picoStressCycle);
 
 		boyfriendCutscene = new FlxSprite(boyfriend.x + 5, boyfriend.y + 20);
 		boyfriendCutscene.antialiasing = ClientPrefs.data.antialiasing;

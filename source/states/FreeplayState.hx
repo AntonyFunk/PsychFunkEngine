@@ -55,8 +55,8 @@ class FreeplayState extends ScriptedState
 	override function create()
 	{
 		preCreate();
-		//Paths.clearStoredMemory();
-		//Paths.clearUnusedMemory();
+
+		FunkinAssets.cache.clearStoredMemory();
 		
 		persistentUpdate = true;
 		PlayState.isStoryMode = false;
@@ -319,7 +319,7 @@ class FreeplayState extends ScriptedState
 			{
 				persistentUpdate = false;
 				FlxG.sound.play(Paths.sound('cancelMenu'));
-				MusicBeatState.switchState(new MainMenuState());
+				MusicBeatState.switchState(new states.MainMenuState());
 			}
 		}
 
@@ -410,7 +410,7 @@ class FreeplayState extends ScriptedState
 		else if (controls.ACCEPT && !player.playingMusic && callOnScriptsExt('onAccept', [curSelected], [songs[curSelected], curSelected], true) != psychlua.LuaUtils.Function_Stop)
 		{
 			persistentUpdate = false;
-			var songLowercase:String = Paths.formatToSongPath(songs[curSelected].songName);
+			var songLowercase:String = Paths.format(songs[curSelected].songName);
 			var poop:String = Highscore.formatSong(songLowercase, curDifficulty);
 
 			try
@@ -444,7 +444,7 @@ class FreeplayState extends ScriptedState
 			if(PlayState._lastLoadedModDirectory != Mods.currentModDirectory)
 			{
 				trace('CHANGED MOD DIRECTORY, RELOADING STUFF');
-				Paths.freeGraphicsFromMemory();
+				//Paths.freeGraphicsFromMemory();
 			}
 			LoadingState.prepareToSong();
 			LoadingState.loadAndSwitchState(new PlayState());
@@ -473,7 +473,7 @@ class FreeplayState extends ScriptedState
 	{
 		try
 		{
-			var path:String = Paths.getPath('characters/$char.json', TEXT);
+			var path:String = Paths.getPath('characters/$char.json');
 			#if MODS_ALLOWED
 			var character:Dynamic = Json.parse(Paths.getTextFromFile(path));
 			#else

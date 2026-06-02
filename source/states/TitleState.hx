@@ -64,13 +64,14 @@ class TitleState extends ScriptedState
 	var easterEggKeysBuffer:String = '';
 	#end
 
-	override public function create():Void {
-		Paths.clearStoredMemory();
-		Paths.clearUnusedMemory();
+	override public function create()
+	{
+		FunkinAssets.cache.clearStoredMemory();
+		FunkinAssets.cache.clearUnusedMemory();
 		
 		rpcDetails = 'Title Screen';
 
-		curWacky = FlxG.random.getObject(getIntroTextShit());
+		curWacky = getIntroText();
 
 		if(!initialized) {
 			if(FlxG.save.data != null && FlxG.save.data.fullscreen)
@@ -147,7 +148,7 @@ class TitleState extends ScriptedState
 		}
 		else
 		{
-			gfDance.animation.addByPrefix('idle', animationName, 24, false);
+			gfDance.animation.addByPrefix('idle', animationName, 24, characterImage == 'ShadowBump');
 			gfDance.animation.play('idle');
 		}
 
@@ -196,10 +197,8 @@ class TitleState extends ScriptedState
 		add(credGroup);
 		add(ngSpr);
 
-		if (initialized)
-			skipIntro();
-		else
-			initialized = true;
+		if (initialized) skipIntro(true);
+		else initialized = true;
 
 		// credGroup.add(credTextShit);
 	}
@@ -219,7 +218,7 @@ class TitleState extends ScriptedState
 
 	function loadJsonData()
 	{
-		if(Paths.fileExists('images/gfDanceTitle.json', TEXT))
+		if(Paths.fileExists('images/gfDanceTitle.json'))
 		{
 			var titleRaw:String = Paths.getTextFromFile('images/gfDanceTitle.json');
 			if(titleRaw != null && titleRaw.length > 0)
@@ -289,22 +288,25 @@ class TitleState extends ScriptedState
 		}
 	}
 
-	function getIntroTextShit():Array<Array<String>>
+	function getIntroText():Array<String>
 	{
 		#if MODS_ALLOWED
 		var firstArray:Array<String> = Mods.mergeAllTextsNamed('data/introText.txt');
 		#else
-		var fullText:String = Assets.getText(Paths.txt('introText'));
+		var fullText:String = Paths.getTextFromFile('data/introText.txt');
 		var firstArray:Array<String> = fullText.split('\n');
 		#end
-		var swagGoodArray:Array<Array<String>> = [];
-
-		for (i in firstArray)
+		
+		if (firstArray != null)
 		{
-			swagGoodArray.push(i.split('--'));
+			var swagGoodArray:Array<Array<String>> = [];
+			for (i in firstArray) swagGoodArray.push(i.split('--'));
+
+			if (swagGoodArray.length > 0) 
+				return FlxG.random.getObject(swagGoodArray);
 		}
 
-		return swagGoodArray;
+		return [];
 	}
 
 	var transitioning:Bool = false;
@@ -367,7 +369,7 @@ class TitleState extends ScriptedState
 				titleText.alpha = FlxMath.lerp(titleTextAlphas[0], titleTextAlphas[1], timer);
 			}
 			
-			if(pressedEnter)
+			if (pressedEnter)
 			{
 				titleText.color = FlxColor.WHITE;
 				titleText.alpha = 1;
@@ -459,6 +461,8 @@ class TitleState extends ScriptedState
 
 	function createCoolText(textArray:Array<String>, ?offset:Float = 0)
 	{
+		if (textArray == null) return;
+
 		for (i in 0...textArray.length)
 		{
 			var money:Alphabet = new Alphabet(0, 0, textArray[i], true);
@@ -508,7 +512,7 @@ class TitleState extends ScriptedState
 				}
 			}
 			else if(curBeat % 2 == 0) {
-				gfDance.animation.play('idle', true);
+				gfDance.animation.play('idle', characterImage != 'ShadowBump');
 			}
 		}
 
@@ -568,15 +572,17 @@ class TitleState extends ScriptedState
 
 	var skippedIntro:Bool = false;
 	var increaseVolume:Bool = false;
-	function skipIntro():Void
+	function skipIntro(?skipFlash:Bool = false):Void
 	{
 		if (!skippedIntro)
 		{
+			var easteregg:String = FlxG.save.data.psychDevsEasterEgg;
+
 			#if TITLE_SCREEN_EASTER_EGG
-			if (playJingle) //Ignore deez
+			if (playJingle) // Ignore deez
 			{
 				playJingle = false;
-				var easteregg:String = FlxG.save.data.psychDevsEasterEgg;
+				
 				if (easteregg == null) easteregg = '';
 				easteregg = easteregg.toUpperCase();
 
@@ -592,7 +598,7 @@ class TitleState extends ScriptedState
 					case 'PESSY':
 						sound = FlxG.sound.play(Paths.sound('JinglePessy'));
 
-					default: //Go back to normal ugly ass boring GF
+					default: // Go back to normal ugly ass boring GF
 						remove(ngSpr);
 						remove(credGroup);
 						FlxG.camera.flash(FlxColor.WHITE, 2);
@@ -604,7 +610,7 @@ class TitleState extends ScriptedState
 				}
 
 				transitioning = true;
-				if(easteregg == 'SHADOW')
+				if (easteregg == 'SHADOW')
 				{
 					new FlxTimer().start(3.2, function(tmr:FlxTimer)
 					{
@@ -629,13 +635,13 @@ class TitleState extends ScriptedState
 					};
 				}
 			}
-			else #end //Default! Edit this one!!
+			else #end // Default! Edit this one!!
 			{
 				remove(ngSpr);
 				remove(credGroup);
-				FlxG.camera.flash(FlxColor.WHITE, 4);
 
-				var easteregg:String = FlxG.save.data.psychDevsEasterEgg;
+				if (!skipFlash) FlxG.camera.flash(FlxColor.WHITE, 2);
+
 				if (easteregg == null) easteregg = '';
 				easteregg = easteregg.toUpperCase();
 				#if TITLE_SCREEN_EASTER_EGG

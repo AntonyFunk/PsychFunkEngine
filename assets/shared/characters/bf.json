@@ -1,188 +1,229 @@
 {
 	"animations": [
 		{
-			"offsets": [
-				-5,
-				0
-			],
-			"loop": false,
+			"offsets": [0, 2],
+			"renderType": "animateatlas",
 			"fps": 24,
 			"anim": "idle",
-			"indices": [],
-			"name": "BF idle dance"
+			"image": "",
+			"animType": "framelabel",
+			"flipX": false,
+			"name": "Idle",
+			"flipY": false,
+			"loop": false,
+			"indices": []
 		},
 		{
-			"offsets": [
-				5,
-				-6
-			],
-			"loop": false,
-			"fps": 24,
+			"renderType": "animateatlas",
+			"offsets": [0, 2],
 			"anim": "singLEFT",
-			"indices": [],
-			"name": "BF NOTE LEFT0"
+			"fps": 24,
+			"name": "Left",
+			"flipX": false,
+			"animType": "framelabel",
+			"image": "",
+			"loop": false,
+			"flipY": false,
+			"indices": []
 		},
 		{
-			"offsets": [
-				-20,
-				-51
-			],
-			"loop": false,
-			"fps": 24,
+			"renderType": "animateatlas",
+			"offsets": [0, 2],
 			"anim": "singDOWN",
-			"indices": [],
-			"name": "BF NOTE DOWN0"
+			"fps": 24,
+			"name": "Down",
+			"flipX": false,
+			"animType": "framelabel",
+			"image": "",
+			"loop": false,
+			"flipY": false,
+			"indices": []
 		},
 		{
-			"offsets": [
-				-46,
-				27
-			],
-			"loop": false,
-			"fps": 24,
+			"renderType": "animateatlas",
+			"offsets": [0, 0],
 			"anim": "singUP",
-			"indices": [],
-			"name": "BF NOTE UP0"
+			"fps": 24,
+			"name": "Up",
+			"flipX": false,
+			"animType": "framelabel",
+			"image": "",
+			"loop": false,
+			"flipY": false,
+			"indices": []
 		},
 		{
-			"offsets": [
-				-48,
-				-7
-			],
-			"loop": false,
-			"fps": 24,
+			"renderType": "animateatlas",
+			"offsets": [0, 0],
 			"anim": "singRIGHT",
-			"indices": [],
-			"name": "BF NOTE RIGHT0"
+			"fps": 24,
+			"name": "Right",
+			"flipX": false,
+			"animType": "framelabel",
+			"image": "",
+			"loop": false,
+			"flipY": false,
+			"indices": []
 		},
 		{
-			"offsets": [
-				7,
-				19
-			],
-			"loop": false,
-			"fps": 24,
+			"renderType": "animateatlas",
+			"offsets": [0, 0],
 			"anim": "singLEFTmiss",
-			"indices": [],
-			"name": "BF NOTE LEFT MISS"
+			"fps": 24,
+			"name": "Left Miss",
+			"flipX": false,
+			"animType": "framelabel",
+			"image": "",
+			"loop": false,
+			"flipY": false,
+			"indices": []
 		},
 		{
-			"offsets": [
-				-15,
-				-19
-			],
-			"loop": false,
-			"fps": 24,
+			"renderType": "animateatlas",
+			"offsets": [0, 0],
 			"anim": "singDOWNmiss",
-			"indices": [],
-			"name": "BF NOTE DOWN MISS"
+			"fps": 24,
+			"name": "Down Miss",
+			"flipX": false,
+			"animType": "framelabel",
+			"image": "",
+			"loop": false,
+			"flipY": false,
+			"indices": []
 		},
 		{
-			"offsets": [
-				-46,
-				27
-			],
-			"loop": false,
-			"fps": 24,
+			"renderType": "animateatlas",
+			"offsets": [0, 0],
 			"anim": "singUPmiss",
-			"indices": [],
-			"name": "BF NOTE UP MISS"
+			"fps": 24,
+			"name": "Up Miss",
+			"flipX": false,
+			"animType": "framelabel",
+			"image": "",
+			"loop": false,
+			"flipY": false,
+			"indices": []
 		},
 		{
-			"offsets": [
-				-44,
-				22
-			],
-			"loop": false,
-			"fps": 24,
+			"renderType": "animateatlas",
+			"offsets": [0, 0],
 			"anim": "singRIGHTmiss",
-			"indices": [],
-			"name": "BF NOTE RIGHT MISS"
+			"fps": 24,
+			"name": "Right Miss",
+			"flipX": false,
+			"animType": "framelabel",
+			"image": "",
+			"loop": false,
+			"flipY": false,
+			"indices": []
 		},
 		{
-			"offsets": [
-				-3,
-				5
-			],
-			"loop": false,
-			"fps": 24,
+			"renderType": "animateatlas",
+			"offsets": [0, 0],
 			"anim": "hey",
-			"indices": [],
-			"name": "BF HEY"
-		},
-		{
-			"offsets": [
-				14,
-				18
-			],
+			"fps": 24,
+			"name": "Hey",
+			"flipX": false,
+			"animType": "framelabel",
+			"image": "",
 			"loop": false,
-			"fps": 24,
-			"anim": "hurt",
-			"indices": [],
-			"name": "BF hit"
+			"flipY": false,
+			"indices": []
 		},
 		{
-			"offsets": [
-				-4,
-				0
-			],
-			"loop": true,
+			"renderType": "animateatlas",
+			"offsets": [0, 0],
+			"anim": "cheer",
 			"fps": 24,
+			"name": "Cheer",
+			"flipX": false,
+			"animType": "framelabel",
+			"image": "",
+			"loop": false,
+			"flipY": false,
+			"indices": []
+		},
+		{
+			"renderType": "animateatlas",
+			"offsets": [0, 0],
 			"anim": "scared",
-			"indices": [],
-			"name": "BF idle shaking"
+			"fps": 24,
+			"name": "Scared",
+			"flipX": false,
+			"animType": "framelabel",
+			"image": "",
+			"loop": false,
+			"flipY": false,
+			"indices": []
 		},
 		{
-			"offsets": [
-				-10,
-				-16
-			],
-			"loop": false,
+			"renderType": "animateatlas",
+			"offsets": [22, 17],
+			"anim": "firstDeath",
 			"fps": 24,
-			"anim": "dodge",
-			"indices": [],
-			"name": "boyfriend dodge"
+			"name": "Death Intro",
+			"flipX": false,
+			"animType": "framelabel",
+			"image": "characters/bf-death",
+			"loop": false,
+			"flipY": false,
+			"indices": []
 		},
 		{
-			"offsets": [
-				294,
-				267
-			],
-			"loop": false,
+			"renderType": "animateatlas",
+			"offsets": [22, 17],
+			"anim": "deathLoop",
 			"fps": 24,
-			"anim": "attack",
-			"indices": [],
-			"name": "boyfriend attack"
+			"name": "Death Loop",
+			"flipX": false,
+			"animType": "framelabel",
+			"image": "characters/bf-death",
+			"loop": true,
+			"flipY": false,
+			"indices": []
 		},
 		{
-			"offsets": [
-				-40,
-				-40
-			],
-			"loop": false,
+			"renderType": "animateatlas",
+			"offsets": [22, 17],
+			"anim": "deathConfirm",
 			"fps": 24,
-			"anim": "pre-attack",
-			"indices": [],
-			"name": "bf pre attack"
+			"name": "Death Confirm",
+			"flipX": false,
+			"animType": "framelabel",
+			"image": "characters/bf-death",
+			"loop": false,
+			"flipY": false,
+			"indices": []
+		},
+		{
+			"renderType": "animateatlas",
+			"offsets": [9, -62],
+			"anim": "fakeoutDeath",
+			"fps": 24,
+			"name": "fake out death BF",
+			"flipX": false,
+			"animType": "symbol",
+			"image": "characters/bfFakeOut",
+			"loop": false,
+			"flipY": false,
+			"indices": []
 		}
 	],
-	"no_antialiasing": false,
-	"image": "characters/BOYFRIEND",
-	"position": [
-		0,
-		350
-	],
+	"vocals_file": "",
+	"image": "characters/bf",
+	"position": [-10, 280],
+	"death": {
+		"delay": 0,
+		"confirm_delay": 0.7,
+		"camera_position": [100, 100],
+		"camera_zoom": 1
+	},
 	"healthicon": "bf",
 	"flip_x": true,
-	"healthbar_colors": [
-		49,
-		176,
-		209
-	],
-	"camera_position": [
-		0,
-		0
-	],
+	"healthbar_colors": [49, 176, 209],
+	"antialiasing": true,
+	"camera_position": [30, 20],
 	"sing_duration": 4,
-	"scale": 1
+	"scale": 1,
+	"_editor_isPlayer": true
 }

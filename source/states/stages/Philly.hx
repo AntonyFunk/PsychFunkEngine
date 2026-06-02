@@ -1,53 +1,62 @@
 package states.stages;
 
+import shaders.BuildingEffectShader;
+
 import states.stages.objects.*;
 import objects.Character;
 
 class Philly extends BaseStage
 {
-	var phillyLightsColors:Array<FlxColor>;
-	var phillyWindow:BGSprite;
-	var phillyStreet:BGSprite;
-	var phillyTrain:PhillyTrain;
+	var phillyLightsColors:Array<FlxColor> = [
+		0xFF31A2FD,
+		0xFF31FD8C,
+		0xFFFB33F5,
+		0xFFFD4531,
+		0xFFFBA633
+	];
 	var curLight:Int = -1;
 
-	//For Philly Glow events
+	// For Philly Glow events
 	var blammedLightsBlack:FlxSprite;
 	var phillyGlowGradient:PhillyGlowGradient;
 	var phillyGlowParticles:FlxTypedGroup<PhillyGlowParticle>;
-	var phillyWindowEvent:BGSprite;
+	var phillyWindowEvent:FlxSprite;
 	var curLightEvent:Int = -1;
 
-	override function create()
+	var lightShader:BuildingEffectShader;
+
+	var trainSound:FlxSound;
+	var trainEnabled:Bool = true;
+
+	var lights:FlxSprite;
+	var train:FlxSprite;
+	var street:FlxSprite;
+
+	override function createPost()
 	{
-		if(!ClientPrefs.data.lowQuality) {
-			var bg:BGSprite = new BGSprite('philly/sky', -100, 0, 0.1, 0.1);
-			add(bg);
-		}
+		gf.animation.onFrameChange.add((name, frame, index) -> {
+			if (name.startsWith('hair')) gf.skipDance = true;
+		});
 
-		var city:BGSprite = new BGSprite('philly/city', -10, 0, 0.3, 0.3);
-		city.setGraphicSize(Std.int(city.width * 0.85));
-		city.updateHitbox();
-		add(city);
-
-		phillyLightsColors = [0xFF31A2FD, 0xFF31FD8C, 0xFFFB33F5, 0xFFFD4531, 0xFFFBA633];
-		phillyWindow = new BGSprite('philly/window', city.x, city.y, 0.3, 0.3);
-		phillyWindow.setGraphicSize(Std.int(phillyWindow.width * 0.85));
-		phillyWindow.updateHitbox();
-		add(phillyWindow);
-		phillyWindow.alpha = 0;
-
-		if(!ClientPrefs.data.lowQuality) {
-			var streetBehind:BGSprite = new BGSprite('philly/behindTrain', -40, 50);
-			add(streetBehind);
-		}
-
-		phillyTrain = new PhillyTrain(2000, 360);
-		add(phillyTrain);
-
-		phillyStreet = new BGSprite('philly/street', -40, 50);
-		add(phillyStreet);
+		gf.animation.onFinish.add((name) -> {
+			if (name == 'hairFall') gf.skipDance = false;
+		});
 	}
+
+	override function buildStage()
+	{
+		lightShader = new BuildingEffectShader(1.0);
+
+		lights = getStageObject('lights');
+		lights.shader = lightShader;
+
+		train = getStageObject('train');
+		street = getStageObject('street');
+
+		trainSound = new FlxSound().loadEmbedded(Paths.sound('train_passes'));
+		FlxG.sound.list.add(trainSound);
+	}
+
 	override function eventPushed(event:objects.Note.EventNote)
 	{
 		switch(event.event)
@@ -55,10 +64,11 @@ class Philly extends BaseStage
 			case "Philly Glow":
 				blammedLightsBlack = new FlxSprite(FlxG.width * -0.5, FlxG.height * -0.5).makeGraphic(Std.int(FlxG.width * 2), Std.int(FlxG.height * 2), FlxColor.BLACK);
 				blammedLightsBlack.visible = false;
-				insert(members.indexOf(phillyStreet), blammedLightsBlack);
+				insert(members.indexOf(lights) + 1, blammedLightsBlack);
 
-				phillyWindowEvent = new BGSprite('philly/window', phillyWindow.x, phillyWindow.y, 0.3, 0.3);
-				phillyWindowEvent.setGraphicSize(Std.int(phillyWindowEvent.width * 0.85));
+				phillyWindowEvent = new FlxSprite(lights.x, lights.y).loadGraphic(lights.graphic);
+				phillyWindowEvent.scrollFactor.set(lights.scrollFactor.x, lights.scrollFactor.y);
+				phillyWindowEvent.scale.set(lights.scale.x, lights.scale.y);
 				phillyWindowEvent.updateHitbox();
 				phillyWindowEvent.visible = false;
 				insert(members.indexOf(blammedLightsBlack) + 1, phillyWindowEvent);
@@ -66,19 +76,38 @@ class Philly extends BaseStage
 				phillyGlowGradient = new PhillyGlowGradient(-400, 225);
 				phillyGlowGradient.visible = false;
 				insert(members.indexOf(blammedLightsBlack) + 1, phillyGlowGradient);
-				if(!ClientPrefs.data.flashing) phillyGlowGradient.intendedAlpha = 0.7;
+				if (!ClientPrefs.data.flashing) phillyGlowGradient.intendedAlpha = 0.7;
 
-				Paths.image('philly/particle'); //precache philly glow particle image
+				Paths.image('philly/particle'); // precache philly glow particle image
 				phillyGlowParticles = new FlxTypedGroup<PhillyGlowParticle>();
 				phillyGlowParticles.visible = false;
 				insert(members.indexOf(phillyGlowGradient) + 1, phillyGlowParticles);
 		}
 	}
 
+	var trainMoving:Bool = false;
+	var trainFrameTiming:Float = 0;
+	var trainCars:Int = 8;
+	var trainFinishing:Bool = false;
+	var trainCooldown:Int = 0;
+
 	override function update(elapsed:Float)
 	{
-		phillyWindow.alpha -= (Conductor.crochet / 1000) * elapsed * 1.5;
-		if(phillyGlowParticles != null)
+		var shaderInput:Float = (Conductor.crochet / 1000) * elapsed * 1.5;
+		lightShader.update(shaderInput);
+
+		if (trainEnabled && trainMoving)
+		{
+			trainFrameTiming += elapsed;
+	
+			if (trainFrameTiming >= 1 / 24)
+			{
+				updateTrainPos();
+				trainFrameTiming = 0;
+			}
+		}
+
+		if (phillyGlowParticles != null)
 		{
 			phillyGlowParticles.forEachAlive(function(particle:PhillyGlowParticle)
 			{
@@ -90,12 +119,25 @@ class Philly extends BaseStage
 
 	override function beatHit()
 	{
-		phillyTrain.beatHit(curBeat);
+		if (trainEnabled)
+		{
+			// Update train cooldown
+			if (!trainMoving) trainCooldown += 1;
+	
+			// Start train
+			if (curBeat % 8 == 4 && FlxG.random.bool(30) && !trainMoving && trainCooldown > 8)
+			{
+				trainCooldown = FlxG.random.int(-4, 0);
+				trainStart();
+			}
+		}
+
 		if (curBeat % 4 == 0)
 		{
 			curLight = FlxG.random.int(0, phillyLightsColors.length - 1, [curLight]);
-			phillyWindow.color = phillyLightsColors[curLight];
-			phillyWindow.alpha = 1;
+
+			lights.color = phillyLightsColors[curLight];
+			lightShader.reset();
 		}
 	}
 
@@ -126,11 +168,8 @@ class Philly extends BaseStage
 							phillyGlowParticles.visible = false;
 							curLightEvent = -1;
 
-							for (who in chars)
-							{
-								who.color = FlxColor.WHITE;
-							}
-							phillyStreet.color = FlxColor.WHITE;
+							if (street != null) street.color = FlxColor.WHITE;
+							for (who in chars) if (who != null) who.color = FlxColor.WHITE;
 						}
 
 					case 1: //turn on
@@ -160,13 +199,10 @@ class Philly extends BaseStage
 						}
 
 						var charColor:FlxColor = color;
-						if(!ClientPrefs.data.flashing) charColor.saturation *= 0.5;
+						if (!ClientPrefs.data.flashing) charColor.saturation *= 0.5;
 						else charColor.saturation *= 0.75;
 
-						for (who in chars)
-						{
-							who.color = charColor;
-						}
+						for (who in chars) if (who != null) who.color = charColor;
 						phillyGlowParticles.forEachAlive(function(particle:PhillyGlowParticle)
 						{
 							particle.color = color;
@@ -175,7 +211,7 @@ class Philly extends BaseStage
 						phillyWindowEvent.color = color;
 
 						color.brightness *= 0.5;
-						phillyStreet.color = color;
+						if (street != null) street.color = color;
 
 					case 2: // spawn particles
 						if(!ClientPrefs.data.lowQuality)
@@ -207,5 +243,49 @@ class Philly extends BaseStage
 		if(!ClientPrefs.data.flashing) color.alphaFloat = 0.5;
 
 		FlxG.camera.flash(color, 0.15, null, true);
+	}
+
+	var startedMoving:Bool = false;
+
+	function trainStart():Void
+	{
+		trainMoving = true;
+		trainSound.play(true);
+	}
+
+	function updateTrainPos():Void
+	{
+		if (trainSound.time >= 4700)
+		{
+			startedMoving = true;
+			if (gf != null) gf.playAnim('hairBlow');
+		}
+  
+		if (startedMoving)
+		{
+			train.x -= 400;
+  
+			if (train.x < -2000 && !trainFinishing)
+			{
+				train.x = -1150;
+				trainCars -= 1;
+  
+				if (trainCars <= 0) trainFinishing = true;
+			}
+  
+			if (train.x < -4000 && trainFinishing) trainReset();
+		}
+	}
+
+	function trainReset():Void
+	{
+		if (gf != null && startedMoving) gf.playAnim('hairFall');
+
+		train.x = 2000;
+		trainCars = 8;
+
+		trainMoving = false;
+		trainFinishing = false;
+		startedMoving = false;
 	}
 }

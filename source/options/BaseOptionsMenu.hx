@@ -484,14 +484,14 @@ class BaseOptionsMenu extends ScriptedSubState
 	}
 
 	function updateTextFrom(option:Option) {
-		if(option.type == KEYBIND) {
+		if (option.type == KEYBIND) {
 			updateBind(option);
 			return;
 		}
 
 		var text:String = option.displayFormat;
 		var val:Dynamic = option.getValue();
-		if(option.type == PERCENT) val *= 100;
+		if (option.type == PERCENT) val *= 100;
 		var def:Dynamic = option.defaultValue;
 		option.text = text.replace('%v', Std.string(val)).replace('%d', Std.string(def));
 	}

@@ -10,7 +10,7 @@ import states.stages.StageWeek1 as BackgroundStage;
 class NoteOffsetState extends ScriptedState
 {
 	var stageDirectory:String = 'week1';
-	var createStage:Bool = true;
+	var createStage:Bool = #if BASE_GAME_FILES true #else false #end;
 	var boyfriend:Character;
 	var gf:Character;
 
@@ -35,9 +35,8 @@ class NoteOffsetState extends ScriptedState
 	var controllerPointer:FlxSprite;
 	var _lastControllerMode:Bool = false;
 
-	override public function create() {
-		preCreate();
-		
+	override public function create()
+	{
 		rpcDetails = 'Delay/Combo Offset Menu';
 
 		// Cameras
@@ -52,11 +51,7 @@ class NoteOffsetState extends ScriptedState
 		persistentUpdate = true;
 		FlxG.sound.pause();
 
-		// Stage
-		if (createStage) {
-			Paths.setCurrentLevel(stageDirectory);
-			new BackgroundStage();
-		}
+		loadBG();
 
 		preCreate();
 
@@ -64,7 +59,6 @@ class NoteOffsetState extends ScriptedState
 		gf = new Character(400, 130, 'gf');
 		gf.x += gf.positionArray[0];
 		gf.y += gf.positionArray[1];
-		gf.scrollFactor.set(0.95, 0.95);
 		boyfriend = new Character(770, 100, 'bf', true);
 		boyfriend.x += boyfriend.positionArray[0];
 		boyfriend.y += boyfriend.positionArray[1];
@@ -79,7 +73,7 @@ class NoteOffsetState extends ScriptedState
 		rating = new FlxSprite().loadGraphic(Paths.image('sick'));
 		rating.cameras = [camHUD];
 		rating.antialiasing = ClientPrefs.data.antialiasing;
-		rating.setGraphicSize(Std.int(rating.width * 0.7));
+		rating.setGraphicSize(Std.int(rating.width * 0.65));
 		rating.updateHitbox();
 		
 		add(rating);
@@ -89,18 +83,15 @@ class NoteOffsetState extends ScriptedState
 		add(comboNums);
 
 		var seperatedScore:Array<Int> = [];
-		for (i in 0...3)
-		{
-			seperatedScore.push(FlxG.random.int(0, 9));
-		}
+		for (i in 0...3) seperatedScore.push(FlxG.random.int(0, 9));
 
-		var daLoop:Int = 0;
+		var daLoop:Int = 1;
 		for (i in seperatedScore)
 		{
-			var numScore:FlxSprite = new FlxSprite(43 * daLoop).loadGraphic(Paths.image('num' + i));
+			var numScore:FlxSprite = new FlxSprite(-(36 * daLoop) - 65).loadGraphic(Paths.image('num$i'));
 			numScore.cameras = [camHUD];
 			numScore.antialiasing = ClientPrefs.data.antialiasing;
-			numScore.setGraphicSize(Std.int(numScore.width * 0.5));
+			numScore.setGraphicSize(Std.int(numScore.width * 0.45));
 			numScore.updateHitbox();
 			comboNums.add(numScore);
 			daLoop++;
@@ -186,13 +177,13 @@ class NoteOffsetState extends ScriptedState
 		var addNum:Int = 1;
 		if(FlxG.keys.pressed.SHIFT || FlxG.gamepads.anyPressed(LEFT_SHOULDER))
 		{
-			if(onComboMenu)
+			if (onComboMenu)
 				addNum = 10;
 			else
 				addNum = 3;
 		}
 
-		if(FlxG.gamepads.anyJustPressed(ANY)) controls.controllerMode = true;
+		if (FlxG.gamepads.anyJustPressed(ANY)) controls.controllerMode = true;
 		else if(FlxG.mouse.justPressed) controls.controllerMode = false;
 
 		if(controls.controllerMode != _lastControllerMode)
@@ -283,14 +274,14 @@ class NoteOffsetState extends ScriptedState
 			var analogMoved:Bool = false;
 			var gamepadPressed:Bool = false;
 			var gamepadReleased:Bool = false;
-			if(controls.controllerMode)
+			if (controls.controllerMode)
 			{
 				for (gamepad in FlxG.gamepads.getActiveGamepads())
 				{
 					analogX = gamepad.getXAxis(LEFT_ANALOG_STICK);
 					analogY = gamepad.getYAxis(LEFT_ANALOG_STICK);
 					analogMoved = (analogX != 0 || analogY != 0);
-					if(analogMoved) break;
+					if (analogMoved) break;
 				}
 				controllerPointer.x = Math.max(0, Math.min(FlxG.width, controllerPointer.x + analogX * 1000 * elapsed));
 				controllerPointer.y = Math.max(0, Math.min(FlxG.height, controllerPointer.y + analogY * 1000 * elapsed));
@@ -303,26 +294,20 @@ class NoteOffsetState extends ScriptedState
 			if (FlxG.mouse.justPressed || gamepadPressed)
 			{
 				holdingObjectType = null;
-				if(!controls.controllerMode)
-					FlxG.mouse.getViewPosition(camHUD, startMousePos);
-				else
-					controllerPointer.getScreenPosition(startMousePos, camHUD);
+				if (!controls.controllerMode) FlxG.mouse.getViewPosition(camHUD, startMousePos);
+				else controllerPointer.getScreenPosition(startMousePos, camHUD);
 
-				if (startMousePos.x - comboNums.x >= 0 && startMousePos.x - comboNums.x <= comboNums.width &&
-					startMousePos.y - comboNums.y >= 0 && startMousePos.y - comboNums.y <= comboNums.height)
+				if (comboNums.overlapsPoint(startMousePos))
 				{
 					holdingObjectType = true;
 					startComboOffset.x = ClientPrefs.data.comboOffset[2];
 					startComboOffset.y = ClientPrefs.data.comboOffset[3];
-					//trace('yo bro');
 				}
-				else if (startMousePos.x - rating.x >= 0 && startMousePos.x - rating.x <= rating.width &&
-						 startMousePos.y - rating.y >= 0 && startMousePos.y - rating.y <= rating.height)
+				else if (rating.overlapsPoint(startMousePos))
 				{
 					holdingObjectType = false;
 					startComboOffset.x = ClientPrefs.data.comboOffset[0];
 					startComboOffset.y = ClientPrefs.data.comboOffset[1];
-					//trace('heya');
 				}
 			}
 			if(FlxG.mouse.justReleased || gamepadReleased) {
@@ -407,7 +392,7 @@ class NoteOffsetState extends ScriptedState
 
 			persistentUpdate = false;
 			MusicBeatState.switchState(new options.OptionsState());
-			if(OptionsState.onPlayState)
+			if(options.OptionsState.onPlayState)
 			{
 				if(ClientPrefs.data.pauseMusic != 'None')
 					FlxG.sound.playMusic(Paths.music(Paths.formatToSongPath(ClientPrefs.data.pauseMusic)));
@@ -456,13 +441,13 @@ class NoteOffsetState extends ScriptedState
 
 	function repositionCombo()
 	{
-		rating.screenCenter();
-		rating.x = coolText.x - 40 + ClientPrefs.data.comboOffset[0];
-		rating.y -= 60 + ClientPrefs.data.comboOffset[1];
+		rating.x = (FlxG.camera.width * 0.474) + ClientPrefs.data.comboOffset[0];
+		rating.x -= rating.width * 0.5;
+		rating.y = (FlxG.camera.height * 0.45 - 60) - ClientPrefs.data.comboOffset[1];
+		rating.y -= rating.height * 0.5;
 
-		comboNums.screenCenter();
-		comboNums.x = coolText.x - 90 + ClientPrefs.data.comboOffset[2];
-		comboNums.y += 80 - ClientPrefs.data.comboOffset[3];
+		comboNums.x = (FlxG.camera.width * 0.507) + ClientPrefs.data.comboOffset[2];
+		comboNums.y = (FlxG.camera.height * 0.44) - ClientPrefs.data.comboOffset[3];
 		reloadTexts();
 	}
 
@@ -477,10 +462,7 @@ class NoteOffsetState extends ScriptedState
 			dumbTexts.add(text);
 			text.cameras = [camHUD];
 
-			if(i > 1)
-			{
-				text.y += 24;
-			}
+			if (i > 1) text.y += 24;
 		}
 	}
 
@@ -535,5 +517,30 @@ class NoteOffsetState extends ScriptedState
 			str2 = Language.getPhrase('switch_on_start', '(Press Start to Switch)');
 
 		changeModeText.text = '< ${str.toUpperCase()} ${str2.toUpperCase()} >';
+	}
+
+	final assetFolder = 'week1'; // load from assets/week1/
+	inline function loadBG()
+	{
+		var lastLoaded = Paths.currentLevel;
+		Paths.currentLevel = assetFolder;
+
+		/////////////
+		// bg data //
+		/////////////
+		#if !BASE_GAME_FILES
+		camGame.bgColor = 0xFF666666;
+		#else
+		var bg:BGSprite = new BGSprite('stageback', -600, -200, 0.9, 0.9);
+		add(bg);
+
+		var stageFront:BGSprite = new BGSprite('stagefront', -650, 600, 0.9, 0.9);
+		stageFront.scale.set(1.1, 1.1);
+		stageFront.updateHitbox();
+		add(stageFront);
+		#end
+		/////////////
+
+		Paths.currentLevel = lastLoaded;
 	}
 }

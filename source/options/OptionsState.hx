@@ -32,6 +32,14 @@ class OptionsState extends ScriptedState
 	var selectorLeft:Alphabet;
 	var selectorRight:Alphabet;
 
+	public function new(?onPlayState:Bool = null)
+	{
+		super();
+
+		if (onPlayState != null) 
+			OptionsState.onPlayState = onPlayState;
+	}
+
 	override function create() {
 		optionFunctions['Note Colors'] = () -> openSubState(new options.NotesColorSubState());
 		optionFunctions['Controls'] = () -> openSubState(new options.ControlsSubState());
@@ -94,9 +102,10 @@ class OptionsState extends ScriptedState
 
 		if (controls.BACK) {
 			FlxG.sound.play(Paths.sound('cancelMenu'));
-			if(onPlayState) {
+			if (onPlayState)
+			{
 				StageData.loadDirectory(PlayState.SONG);
-				LoadingState.loadAndSwitchState(new PlayState());
+				MusicBeatState.switchState(new PlayState());
 				FlxG.sound.music.volume = 0;
 			}
 			else MusicBeatState.switchState(new MainMenuState());

@@ -57,7 +57,7 @@ class StrumNote extends FlxSprite
 		else skin = Note.defaultNoteSkin;
 
 		var customSkin:String = skin + Note.getNoteSkinPostfix();
-		if (Paths.fileExists('images/$customSkin.png', IMAGE)) {
+		if (Paths.fileExists('images/$customSkin.png')) {
 			skin = customSkin;
 		} else {
 			skin = '';
@@ -87,12 +87,12 @@ class StrumNote extends FlxSprite
 			skinPostfix = Note.getNoteSkinPostfix();
 			checkSkin = path + skinPostfix;
 			
-			if (!Paths.fileExists('images/$checkSkin.png', IMAGE)) {
+			if (!Paths.fileExists('images/$checkSkin.png')) {
 				skinPostfix = '';
 				checkSkin = path;
 			}
 			
-			if (Paths.fileExists('images/$checkSkin.png', IMAGE)) {
+			if (Paths.fileExists('images/$checkSkin.png')) {
 				validSkin = path;
 				break;
 			}

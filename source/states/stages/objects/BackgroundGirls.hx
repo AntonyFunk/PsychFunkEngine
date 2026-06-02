@@ -12,7 +12,7 @@ class BackgroundGirls extends FlxSprite
 		antialiasing = false;
 		swapDanceType();
 
-		setGraphicSize(Std.int(width * PlayState.daPixelZoom));
+		scale.set(6, 6);
 		updateHitbox();
 		animation.play('danceLeft');
 	}

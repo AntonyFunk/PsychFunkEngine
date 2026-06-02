@@ -94,11 +94,7 @@ class MetaNote extends Note
 
 		if(sustainLength > 0)
 		{
-			if(sustainSprite == null)
-			{
-				sustainSprite = new EditorSustain(noteData);//new FlxSprite().makeGraphic(1, 1, FlxColor.WHITE);
-				sustainSprite.scrollFactor.x = 0;
-			}
+			if (sustainSprite == null) sustainSprite = new EditorSustain(noteData);
 			sustainSprite.sustainHeight = Math.max((Conductor.getStep(strumTime + newLength) - Conductor.getStep(strumTime)) * ChartingState.GRID_SIZE * zoom - ChartingState.GRID_SIZE * .5, 0);
 			sustainSprite.useBlandSustains = useBlandSustains;
 			sustainSprite.updateHitbox();
@@ -127,7 +123,6 @@ class MetaNote extends Note
 				txt.alignment = CENTER;
 				txt.borderColor = FlxColor.BLACK;
 				txt.borderStyle = SHADOW_XY(2, 2);
-				txt.scrollFactor.x = 0;
 				noteTypeTexts.set(num, txt);
 			}
 			else txt = noteTypeTexts.get(num);
@@ -183,7 +178,6 @@ class EditorSustain extends Note {
 	public function new(data:Int) {
 		basicSustainTile = new FlxSprite().makeGraphic(1, 1, FlxColor.WHITE);
 		sustainTile = new FlxSprite();
-		sustainTile.scrollFactor.x = 0;
 		clipRect = new flixel.math.FlxRect(0, 0);
 		sustainTile.clipRect = new flixel.math.FlxRect();
 		
@@ -324,7 +318,6 @@ class EventMetaNote extends MetaNote
 		
 		eventText = new FlxText(0, 0, width, '', 12);
 		eventText.setFormat(eventText.font, 12, FlxColor.WHITE, CENTER, SHADOW_XY(2, 2), FlxColor.BLACK);
-		eventText.scrollFactor.x = 0;
 		
 		gui = new EventNoteGui(this);
 		updateEventInfo();
@@ -450,9 +443,7 @@ class EventNoteGui extends FlxSpriteGroup {
 		var selected:Bool = false;
 		
 		for (event in eventContainer) {
-			var eventBounds = event.getScreenBounds(null, charter.camUI);
-			eventBounds.top -= charter.scrollY;
-			eventBounds.bottom -= charter.scrollY;
+			var eventBounds = event.getScreenBounds(null, FlxG.camera);
 
 			if (bounds.overlaps(eventBounds) && !Lambda.exists(charter.selectedEvents, (e) -> e.event == events[event.ID])) {
 				charter.selectedEvents.push({event: events[event.ID], note: eventNote});

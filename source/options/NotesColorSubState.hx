@@ -101,7 +101,7 @@ class NotesColorSubState extends ScriptedSubState
 		colorGradientSelector.offset.y = 5;
 		add(colorGradientSelector);
 
-		colorPalette = new FlxSprite(0, 580).loadGraphic(Paths.image('noteColorMenu/palette', false));
+		colorPalette = new FlxSprite(0, 580).loadGraphic(Paths.image('noteColorMenu/palette'));
 		colorPalette.scale.set(20, 20);
 		colorPalette.updateHitbox();
 		colorPalette.x = bg.x + (bg.width - colorPalette.width) * .5;

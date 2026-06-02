@@ -1,30 +1,594 @@
 {
-	"directory": "week4",
-	"defaultZoom": 0.9,
-	"stageUI": "",
-
-	"boyfriend": [1030, -120],
-	"girlfriend": [400, 130],
-	"opponent": [100, 100],
-	"hide_girlfriend": false,
-
-	"camera_boyfriend": [-200, 0],
-	"camera_opponent": [0, 0],
-	"camera_girlfriend": [0, 0],
-	"camera_speed": 1,
-
-	"preload": {
-		"images/limo/limoDancer": 2,
-		"images/limo/limoDrive": 2,
-		"images/gore/": 2,
-		"images/limo/fastCarLol": 3,
-		"images/limo/limoSunset": 3,
-		"images/limo/bgLimo": 3
-	},
-
+	"camera_boyfriend": [
+		-200,
+		0
+	],
 	"_editorMeta": {
-		"dad": "mom-car",
 		"boyfriend": "bf-car",
-		"gf": "gf-car"
-	}
+		"gf": "gf-car",
+		"dad": "mom-car"
+	},
+	"girlfriend": [
+		400,
+		130
+	],
+	"stageUI": "",
+	"boyfriend": [
+		1030,
+		-120
+	],
+	"objects": [
+		{
+			"x": -120,
+			"y": -50,
+			"scale": [
+				1,
+				1
+			],
+			"zoomFactor": 1,
+			"image": "limo/limoSunset",
+			"flipX": false,
+			"color": "FFFFFF",
+			"filters": 3,
+			"angle": 0,
+			"name": "limoSunset",
+			"antialiasing": true,
+			"flipY": false,
+			"scroll": [
+				0.1,
+				0.1
+			],
+			"alpha": 1,
+			"type": "sprite"
+		},
+		{
+			"x": -200,
+			"y": 480,
+			"scale": [
+				1,
+				1
+			],
+			"zoomFactor": 1,
+			"image": "limo/bgLimo",
+			"flipX": false,
+			"color": "FFFFFF",
+			"filters": 3,
+			"angle": 0,
+			"name": "bgLimo",
+			"firstAnimation": "drive",
+			"antialiasing": true,
+			"flipY": false,
+			"scroll": [
+				0.4,
+				0.4
+			],
+			"alpha": 1,
+			"animations": [
+				{
+					"animType": "symbol",
+					"image": "",
+					"offsets": null,
+					"indices": [],
+					"renderType": "sparrow",
+					"fps": 24,
+					"flipX": false,
+					"flipY": false,
+					"anim": "drive",
+					"loop": true,
+					"name": "background limo pink"
+				}
+			],
+			"type": "animatedSprite"
+		},
+		{
+			"x": 100,
+			"y": 100,
+			"scale": [
+				1,
+				1
+			],
+			"zoomFactor": 1,
+			"image": "limo/limoDancer",
+			"flipX": false,
+			"color": "FFFFFF",
+			"filters": 3,
+			"angle": 0,
+			"name": "limoDancer1",
+			"firstAnimation": "danceRight",
+			"antialiasing": true,
+			"flipY": false,
+			"scroll": [
+				0.4,
+				0.4
+			],
+			"alpha": 1,
+			"animations": [
+				{
+					"animType": "symbol",
+					"image": "",
+					"offsets": null,
+					"indices": [
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10,
+						11,
+						12,
+						13,
+						14
+					],
+					"renderType": "sparrow",
+					"fps": 24,
+					"flipX": false,
+					"flipY": false,
+					"anim": "danceLeft",
+					"loop": false,
+					"name": "bg dancer sketch PINK"
+				},
+				{
+					"animType": "symbol",
+					"image": "",
+					"offsets": null,
+					"indices": [
+						15,
+						16,
+						17,
+						18,
+						19,
+						20,
+						21,
+						22,
+						23,
+						24,
+						25,
+						26,
+						27,
+						28,
+						29
+					],
+					"renderType": "sparrow",
+					"fps": 24,
+					"flipX": false,
+					"flipY": false,
+					"anim": "danceRight",
+					"loop": false,
+					"name": "bg dancer sketch PINK"
+				}
+			],
+			"type": "animatedSprite"
+		},
+		{
+			"x": 400,
+			"y": 100,
+			"scale": [
+				1,
+				1
+			],
+			"zoomFactor": 1,
+			"image": "limo/limoDancer",
+			"flipX": false,
+			"color": "FFFFFF",
+			"filters": 3,
+			"angle": 0,
+			"name": "limoDancer2",
+			"firstAnimation": "danceRight",
+			"antialiasing": true,
+			"flipY": false,
+			"scroll": [
+				0.4,
+				0.4
+			],
+			"alpha": 1,
+			"animations": [
+				{
+					"animType": "symbol",
+					"image": "",
+					"offsets": null,
+					"indices": [
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10,
+						11,
+						12,
+						13,
+						14
+					],
+					"renderType": "sparrow",
+					"fps": 24,
+					"flipX": false,
+					"flipY": false,
+					"anim": "danceLeft",
+					"loop": false,
+					"name": "bg dancer sketch PINK"
+				},
+				{
+					"animType": "symbol",
+					"image": "",
+					"offsets": null,
+					"indices": [
+						15,
+						16,
+						17,
+						18,
+						19,
+						20,
+						21,
+						22,
+						23,
+						24,
+						25,
+						26,
+						27,
+						28,
+						29
+					],
+					"renderType": "sparrow",
+					"fps": 24,
+					"flipX": false,
+					"flipY": false,
+					"anim": "danceRight",
+					"loop": false,
+					"name": "bg dancer sketch PINK"
+				}
+			],
+			"type": "animatedSprite"
+		},
+		{
+			"x": 700,
+			"y": 100,
+			"scale": [
+				1,
+				1
+			],
+			"zoomFactor": 1,
+			"image": "limo/limoDancer",
+			"flipX": false,
+			"color": "FFFFFF",
+			"filters": 3,
+			"angle": 0,
+			"name": "limoDancer3",
+			"firstAnimation": "danceRight",
+			"antialiasing": true,
+			"flipY": false,
+			"scroll": [
+				0.4,
+				0.4
+			],
+			"alpha": 1,
+			"animations": [
+				{
+					"animType": "symbol",
+					"image": "",
+					"offsets": null,
+					"indices": [
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10,
+						11,
+						12,
+						13,
+						14
+					],
+					"renderType": "sparrow",
+					"fps": 24,
+					"flipX": false,
+					"flipY": false,
+					"anim": "danceLeft",
+					"loop": false,
+					"name": "bg dancer sketch PINK"
+				},
+				{
+					"animType": "symbol",
+					"image": "",
+					"offsets": null,
+					"indices": [
+						15,
+						16,
+						17,
+						18,
+						19,
+						20,
+						21,
+						22,
+						23,
+						24,
+						25,
+						26,
+						27,
+						28,
+						29
+					],
+					"renderType": "sparrow",
+					"fps": 24,
+					"flipX": false,
+					"flipY": false,
+					"anim": "danceRight",
+					"loop": false,
+					"name": "bg dancer sketch PINK"
+				}
+			],
+			"type": "animatedSprite"
+		},
+		{
+			"x": 1000,
+			"y": 100,
+			"scale": [
+				1,
+				1
+			],
+			"zoomFactor": 1,
+			"image": "limo/limoDancer",
+			"flipX": false,
+			"color": "FFFFFF",
+			"filters": 3,
+			"angle": 0,
+			"name": "limoDancer4",
+			"firstAnimation": "danceRight",
+			"antialiasing": true,
+			"flipY": false,
+			"scroll": [
+				0.4,
+				0.4
+			],
+			"alpha": 1,
+			"animations": [
+				{
+					"animType": "symbol",
+					"image": "",
+					"offsets": null,
+					"indices": [
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10,
+						11,
+						12,
+						13,
+						14
+					],
+					"renderType": "sparrow",
+					"fps": 24,
+					"flipX": false,
+					"flipY": false,
+					"anim": "danceLeft",
+					"loop": false,
+					"name": "bg dancer sketch PINK"
+				},
+				{
+					"animType": "symbol",
+					"image": "",
+					"offsets": null,
+					"indices": [
+						15,
+						16,
+						17,
+						18,
+						19,
+						20,
+						21,
+						22,
+						23,
+						24,
+						25,
+						26,
+						27,
+						28,
+						29
+					],
+					"renderType": "sparrow",
+					"fps": 24,
+					"flipX": false,
+					"flipY": false,
+					"anim": "danceRight",
+					"loop": false,
+					"name": "bg dancer sketch PINK"
+				}
+			],
+			"type": "animatedSprite"
+		},
+		{
+			"x": 1300,
+			"y": 100,
+			"scale": [
+				1,
+				1
+			],
+			"zoomFactor": 1,
+			"image": "limo/limoDancer",
+			"flipX": false,
+			"color": "FFFFFF",
+			"filters": 3,
+			"angle": 0,
+			"name": "limoDancer5",
+			"firstAnimation": "danceRight",
+			"antialiasing": true,
+			"flipY": false,
+			"scroll": [
+				0.4,
+				0.4
+			],
+			"alpha": 1,
+			"animations": [
+				{
+					"animType": "symbol",
+					"image": "",
+					"offsets": null,
+					"indices": [
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10,
+						11,
+						12,
+						13,
+						14
+					],
+					"renderType": "sparrow",
+					"fps": 24,
+					"flipX": false,
+					"flipY": false,
+					"anim": "danceLeft",
+					"loop": false,
+					"name": "bg dancer sketch PINK"
+				},
+				{
+					"animType": "symbol",
+					"image": "",
+					"offsets": null,
+					"indices": [
+						15,
+						16,
+						17,
+						18,
+						19,
+						20,
+						21,
+						22,
+						23,
+						24,
+						25,
+						26,
+						27,
+						28,
+						29
+					],
+					"renderType": "sparrow",
+					"fps": 24,
+					"flipX": false,
+					"flipY": false,
+					"anim": "danceRight",
+					"loop": false,
+					"name": "bg dancer sketch PINK"
+				}
+			],
+			"type": "animatedSprite"
+		},
+		{
+			"type": "gf"
+		},
+		{
+			"x": -120,
+			"y": 528,
+			"scale": [
+				1,
+				1
+			],
+			"zoomFactor": 1,
+			"image": "limo/limoDrive",
+			"flipX": false,
+			"color": "FFFFFF",
+			"filters": 3,
+			"angle": 0,
+			"name": "limo",
+			"firstAnimation": "drive",
+			"antialiasing": true,
+			"flipY": false,
+			"scroll": [
+				1,
+				1
+			],
+			"alpha": 1,
+			"animations": [
+				{
+					"animType": "symbol",
+					"image": "",
+					"offsets": [
+						0,
+						0
+					],
+					"indices": [],
+					"renderType": "sparrow",
+					"fps": 24,
+					"flipX": false,
+					"flipY": false,
+					"anim": "drive",
+					"loop": true,
+					"name": "Limo stage"
+				}
+			],
+			"type": "animatedSprite"
+		},
+		{
+			"type": "dad"
+		},
+		{
+			"type": "boyfriend"
+		},
+		{
+			"x": -12600,
+			"y": 160,
+			"scale": [
+				1,
+				1
+			],
+			"zoomFactor": 1,
+			"image": "limo/fastCarLol",
+			"flipX": false,
+			"color": "FFFFFF",
+			"filters": 3,
+			"angle": 0,
+			"name": "fastCar",
+			"antialiasing": true,
+			"flipY": false,
+			"scroll": [
+				1,
+				1
+			],
+			"alpha": 1,
+			"type": "sprite"
+		}
+	],
+	"camera_girlfriend": [
+		0,
+		0
+	],
+	"defaultZoom": 0.9,
+	"camera_speed": 1,
+	"directory": "week4",
+	"opponent": [
+		100,
+		100
+	],
+	"camera_opponent": [
+		0,
+		0
+	],
+	"hide_girlfriend": false
 }

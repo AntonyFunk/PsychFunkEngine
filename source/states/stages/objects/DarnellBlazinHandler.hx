@@ -3,12 +3,17 @@ package states.stages.objects;
 import objects.Note;
 import objects.Character;
 
+// Darnell Note functions
 class DarnellBlazinHandler
 {
-	public function new() {}
+	static var originalDadPos = -1;
+	public static function init()
+	{
+		originalDadPos = FlxG.state.members.indexOf(dadGroup);
+	}
 
-	var cantUppercut:Bool = false;
-	public function noteHit(note:Note)
+	static var cantUppercut:Bool = false;
+	public static function noteHit(note:Note)
 	{
 		// SPECIAL CASE: If Pico hits a poor note at low health (at 30% chance),
 		// Darnell may duck below Pico's punch to attempt an uppercut.
@@ -98,7 +103,7 @@ class DarnellBlazinHandler
 		cantUppercut = false;
 	}
 	
-	public function noteMiss(note:Note)
+	public static function noteMiss(note:Note)
 	{
 		// SPECIAL CASE: Darnell prepared to uppercut last time and Pico missed! FINISH HIM!
 		if (dad.getAnimationName() == 'uppercutPrep')
@@ -193,7 +198,7 @@ class DarnellBlazinHandler
 		cantUppercut = false;
 	}
 
-	public function noteMissPress(direction:Int)
+	public static function noteMissPress(direction:Int)
 	{
 		if (willMissBeLethal())
 			playPunchLowAnim(); // Darnell alternates a punch so that Pico dies.
@@ -208,45 +213,45 @@ class DarnellBlazinHandler
 		}
 	}
 	
-	var alternate:Bool = false;
-	function doAlternate():String
+	static var alternate:Bool = false;
+	static function doAlternate():String
 	{
 		alternate = !alternate;
 		return alternate ? '1' : '2';
 	}
 
-	function playBlockAnim()
+	static function playBlockAnim()
 	{
 		dad.playAnim('block', true);
 		PlayState.instance.camGame.shake(0.002, 0.1);
 		moveToBack();
 	}
 
-	function playCringeAnim()
+	static function playCringeAnim()
 	{
 		dad.playAnim('cringe', true);
 		moveToBack();
 	}
 
-	function playDodgeAnim()
+	static function playDodgeAnim()
 	{
 		dad.playAnim('dodge', true, false);
 		moveToBack();
 	}
 
-	function playIdleAnim()
+	static function playIdleAnim()
 	{
 		dad.playAnim('idle', false);
-		moveToBack();
+		moveToIdle();
 	}
 
-	function playFakeoutAnim()
+	static function playFakeoutAnim()
 	{
 		dad.playAnim('fakeout', true);
 		moveToBack();
 	}
 
-	function playPissedConditionalAnim()
+	static function playPissedConditionalAnim()
 	{
 		if (dad.getAnimationName() == "cringe")
 			playPissedAnim();
@@ -254,79 +259,79 @@ class DarnellBlazinHandler
 			playIdleAnim();
 	}
 
-	function playPissedAnim()
+	static function playPissedAnim()
 	{
 		dad.playAnim('pissed', true);
 		moveToBack();
 	}
 
-	function playUppercutPrepAnim()
+	static function playUppercutPrepAnim()
 	{
 		dad.playAnim('uppercutPrep', true);
 		moveToFront();
 	}
 
-	function playUppercutAnim()
+	static function playUppercutAnim()
 	{
 		dad.playAnim('uppercut', true);
 		moveToFront();
 	}
 
-	function playUppercutHitAnim()
+	static function playUppercutHitAnim()
 	{
 		dad.playAnim('uppercutHit', true);
 		moveToBack();
 	}
 
-	function playHitHighAnim()
+	static function playHitHighAnim()
 	{
 		dad.playAnim('hitHigh', true);
 		PlayState.instance.camGame.shake(0.0025, 0.15);
 		moveToBack();
 	}
 
-	function playHitLowAnim()
+	static function playHitLowAnim()
 	{
 		dad.playAnim('hitLow', true);
 		PlayState.instance.camGame.shake(0.0025, 0.15);
 		moveToBack();
 	}
 
-	function playPunchHighAnim()
+	static function playPunchHighAnim()
 	{
 		dad.playAnim('punchHigh' + doAlternate(), true);
 		moveToFront();
 	}
 
-	function playPunchLowAnim()
+	static function playPunchLowAnim()
 	{
 		dad.playAnim('punchLow' + doAlternate(), true);
 		moveToFront();
 	}
 
-	function playSpinAnim()
+	static function playSpinAnim()
 	{
 		dad.playAnim('hitSpin', true);
 		PlayState.instance.camGame.shake(0.0025, 0.15);
 		moveToBack();
 	}
 	
-	function willMissBeLethal()
+	static function willMissBeLethal()
 	{
 		return PlayState.instance.health <= 0.0 && !PlayState.instance.practiceMode;
 	}
 	
-	function wasNoteHitPoorly(rating:String)
+	static function wasNoteHitPoorly(rating:String)
 	{
 		return (rating == "bad" || rating == "shit");
 	}
 
-	function isPlayerLowHealth()
+	static function isPlayerLowHealth()
 	{
 		return PlayState.instance.health <= 0.3 * 2;
 	}
 	
-	function moveToBack()
+	static function moveToBack()
 	{
 		var dadPos:Int = FlxG.state.members.indexOf(dadGroup);
 		var bfPos:Int = FlxG.state.members.indexOf(boyfriendGroup);
@@ -336,7 +341,7 @@ class DarnellBlazinHandler
 		FlxG.state.members[dadPos] = boyfriendGroup;
 	}
 
-	function moveToFront()
+	static function moveToFront()
 	{
 		var dadPos:Int = FlxG.state.members.indexOf(dadGroup);
 		var bfPos:Int = FlxG.state.members.indexOf(boyfriendGroup);
@@ -346,12 +351,17 @@ class DarnellBlazinHandler
 		FlxG.state.members[dadPos] = boyfriendGroup;
 	}
 
-	var boyfriend(get, never):Character;
-	var dad(get, never):Character;
-	var boyfriendGroup(get, never):FlxSpriteGroup;
-	var dadGroup(get, never):FlxSpriteGroup;
-	function get_boyfriend() return PlayState.instance.boyfriend;
-	function get_dad() return PlayState.instance.dad;
-	function get_boyfriendGroup() return PlayState.instance.boyfriendGroup;
-	function get_dadGroup() return PlayState.instance.dadGroup;
+	static function moveToIdle()
+	{
+		FlxG.state.members[originalDadPos] = dadGroup;
+	}
+
+	static var boyfriend(get, never):Character;
+	static var dad(get, never):Character;
+	static var boyfriendGroup(get, never):FlxSpriteGroup;
+	static var dadGroup(get, never):FlxSpriteGroup;
+	static function get_boyfriend() return PlayState.instance.boyfriend;
+	static function get_dad() return PlayState.instance.dad;
+	static function get_boyfriendGroup() return PlayState.instance.boyfriendGroup;
+	static function get_dadGroup() return PlayState.instance.dadGroup;
 }

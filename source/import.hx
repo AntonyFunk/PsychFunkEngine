@@ -37,21 +37,29 @@ import backend.Difficulty;
 import backend.Mods;
 import backend.Language;
 
-import backend.ui.*; //Psych-UI
+import backend.ui.*; // Psych-UI
+import backend.ui.utils.*;
+
+import psychlua.*;
 
 import debug.Log;
 
 import objects.Alphabet;
 import objects.BGSprite;
 
+import funkin.FunkinAssets;
+import funkin.objects.FunkinSprite;
+import funkin.backend.FunkinCache;
+import funkin.backend.animation.util.FunkinAnimationUtil;
+
 import states.PlayState;
 import states.LoadingState;
 
-#if flixel_animate
-import animate.*;
-#end
+import animate.FlxAnimate;
+import animate.FlxAnimateFrames;
+import animate.internal.elements.FlxSpriteElement;
 
-//Flixel
+// Flixel
 import flixel.sound.FlxSound;
 import flixel.FlxG;
 import flixel.FlxBasic;
@@ -69,5 +77,6 @@ import flixel.group.FlxSpriteGroup;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.addons.transition.FlxTransitionableState;
 
+using Lambda;
 using StringTools;
 #end

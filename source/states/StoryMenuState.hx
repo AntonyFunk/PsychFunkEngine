@@ -47,8 +47,8 @@ class StoryMenuState extends ScriptedState
 
 	override function create()
 	{	
-		Paths.clearStoredMemory();
-		Paths.clearUnusedMemory();
+		FunkinAssets.cache.clearStoredMemory();
+		FunkinAssets.cache.clearUnusedMemory();
 
 		persistentUpdate = persistentDraw = true;
 		PlayState.isStoryMode = true;
@@ -353,7 +353,7 @@ class StoryMenuState extends ScriptedState
 		@:privateAccess
 		if (PlayState._lastLoadedModDirectory != Mods.currentModDirectory) {
 			trace('CHANGED MOD DIRECTORY, RELOADING STUFF');
-			Paths.freeGraphicsFromMemory();
+			//Paths.freeGraphicsFromMemory();
 		}
 		LoadingState.prepareToSong();
 		new FlxTimer().start(1, (_) -> {

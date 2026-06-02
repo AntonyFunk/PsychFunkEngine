@@ -1,78 +1,66 @@
 {
 	"animations": [
 		{
-			"offsets": [
-				2,
-				0
-			],
+			"renderType": "sparrow",
 			"loop": false,
+			"offsets": [1, 0],
+			"fps": 24,
 			"anim": "idle",
-			"fps": 24,
-			"name": "Angry Senpai Idle",
-			"indices": []
+			"indices": [],
+			"name": "Angry Senpai Idle"
 		},
 		{
-			"offsets": [
-				5,
-				37
-			],
+			"renderType": "sparrow",
 			"loop": false,
+			"offsets": [2, 6],
+			"fps": 24,
 			"anim": "singUP",
-			"fps": 24,
-			"name": "Angry Senpai UP NOTE",
-			"indices": []
+			"indices": [],
+			"name": "Angry Senpai UP NOTE"
 		},
 		{
-			"offsets": [
-				40,
-				0
-			],
+			"renderType": "sparrow",
 			"loop": false,
+			"offsets": [5, 1],
+			"fps": 24,
 			"anim": "singLEFT",
-			"fps": 24,
-			"name": "Angry Senpai LEFT NOTE",
-			"indices": []
+			"indices": [],
+			"name": "Angry Senpai LEFT NOTE"
 		},
 		{
-			"offsets": [
-				0,
-				0
-			],
+			"renderType": "sparrow",
 			"loop": false,
+			"offsets": [0, 0],
+			"fps": 24,
 			"anim": "singRIGHT",
-			"fps": 24,
-			"name": "Angry Senpai RIGHT NOTE",
-			"indices": []
+			"indices": [],
+			"name": "Angry Senpai RIGHT NOTE"
 		},
 		{
-			"offsets": [
-				14,
-				0
-			],
+			"renderType": "sparrow",
 			"loop": false,
-			"anim": "singDOWN",
+			"offsets": [2, 1],
 			"fps": 24,
-			"name": "Angry Senpai DOWN NOTE",
-			"indices": []
+			"anim": "singDOWN",
+			"indices": [],
+			"name": "Angry Senpai DOWN NOTE"
 		}
 	],
-	"no_antialiasing": true,
+	"vocals_file": "",
 	"image": "characters/senpai",
-	"position": [
-		150,
-		360
-	],
-	"healthicon": "senpai-pixel",
+	"position": [-150, -140],
+	"death": {
+		"delay": 0,
+		"confirm_delay": 0.7,
+		"camera_position": [0, 0],
+		"camera_zoom": 1
+	},
+	"healthicon": "senpai-angry-pixel",
 	"flip_x": false,
-	"healthbar_colors": [
-		255,
-		170,
-		111
-	],
-	"camera_position": [
-		-240,
-		-330
-	],
+	"healthbar_colors": [255, 170, 111],
+	"antialiasing": false,
+	"camera_position": [90, 80],
 	"sing_duration": 4,
-	"scale": 6
+	"scale": 6,
+	"_editor_isPlayer": false
 }

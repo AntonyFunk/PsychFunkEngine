@@ -224,7 +224,7 @@ class VisualsSettingsSubState extends BaseOptionsMenu
 	{
 		var skin:String = Note.defaultNoteSkin;
 		var customSkin:String = skin + Note.getNoteSkinPostfix();
-		if(Paths.fileExists('images/$customSkin.png', IMAGE)) skin = customSkin;
+		if(Paths.fileExists('images/$customSkin.png')) skin = customSkin;
 
 		note.texture = skin; //Load texture and anims
 		note.reloadNote();
@@ -276,11 +276,11 @@ class VisualsSettingsSubState extends BaseOptionsMenu
 				if (maxFps < 0) maxFps = 0;
 			}
 
-			splash.offset.set(10, 10);
+			splash.frameOffset.set(10, 10);
 			if (offsets != null)
 			{
-				splash.offset.x += offsets[0];
-				splash.offset.y += offsets[1];
+				splash.frameOffset.x += offsets[0];
+				splash.frameOffset.y += offsets[1];
 			}
 
 			if (splash.animation.curAnim != null)

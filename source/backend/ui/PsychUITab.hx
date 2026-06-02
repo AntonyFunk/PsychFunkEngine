@@ -25,10 +25,10 @@ class PsychUITab extends FlxSprite
 	{
 		super.draw();
 
-		if(visible && text != null && text.exists && text.visible)
+		if (visible && text != null && text.exists && text.visible)
 		{
 			text.x = x;
-			text.y = y + height/2 - text.height/2;
+			text.y = getMidpoint().y - (text.height * 0.5);
 			text.draw();
 		}
 	}

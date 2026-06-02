@@ -6,10 +6,14 @@ import objects.Character;
 // Pico Note functions
 class PicoBlazinHandler
 {
-	public function new() {}
+	static var originalBFPos = -1;
+	public static function init()
+	{
+		originalBFPos = FlxG.state.members.indexOf(boyfriendGroup);
+	}
 
-	var cantUppercut = false;
-	public function noteHit(note:Note)
+	static var cantUppercut = false;
+	public static function noteHit(note:Note)
 	{
 		if (wasNoteHitPoorly(note.rating) && isPlayerLowHealth() && isDarnellPreppingUppercut())
 		{
@@ -89,7 +93,7 @@ class PicoBlazinHandler
 		}
 	}
 
-	public function noteMiss(note:Note)
+	public static function noteMiss(note:Note)
 	{
 		//trace('missed note!');
 		if (isDarnellInUppercut())
@@ -182,7 +186,7 @@ class PicoBlazinHandler
 		}
 	}
 	
-	public function noteMissPress(direction:Int)
+	public static function noteMissPress(direction:Int)
 	{
 		if (willMissBeLethal())
 			playHitLowAnim(); // Darnell throws a punch so that Pico dies.
@@ -190,118 +194,98 @@ class PicoBlazinHandler
 			playPunchHighAnim(); // Pico wildly throws punches but Darnell dodges.
 	}
 
-	function movePicoToBack()
-	{
-		var bfPos:Int = FlxG.state.members.indexOf(boyfriendGroup);
-		var dadPos:Int = FlxG.state.members.indexOf(dadGroup);
-		if(bfPos < dadPos) return;
-
-		FlxG.state.members[dadPos] = boyfriendGroup;
-		FlxG.state.members[bfPos] = dadGroup;
-	}
-
-	function movePicoToFront()
-	{
-		var bfPos:Int = FlxG.state.members.indexOf(boyfriendGroup);
-		var dadPos:Int = FlxG.state.members.indexOf(dadGroup);
-		if(bfPos > dadPos) return;
-
-		FlxG.state.members[dadPos] = boyfriendGroup;
-		FlxG.state.members[bfPos] = dadGroup;
-	}
-
-	var alternate:Bool = false;
-	function doAlternate():String
+	static var alternate:Bool = false;
+	static function doAlternate():String
 	{
 		alternate = !alternate;
 		return alternate ? '1' : '2';
 	}
 
-	function playBlockAnim()
+	static function playBlockAnim()
 	{
 		boyfriend.playAnim('block', true);
 		FlxG.camera.shake(0.002, 0.1);
 		moveToBack();
 	}
 
-	function playCringeAnim()
+	static function playCringeAnim()
 	{
 		boyfriend.playAnim('cringe', true);
 		moveToBack();
 	}
 
-	function playDodgeAnim()
+	static function playDodgeAnim()
 	{
 		boyfriend.playAnim('dodge', true);
-		moveToBack();
+		moveToIdle();
 	}
 
-	function playIdleAnim()
+	static function playIdleAnim()
 	{
 		boyfriend.playAnim('idle', false);
 		moveToBack();
 	}
 
-	function playFakeoutAnim()
+	static function playFakeoutAnim()
 	{
 		boyfriend.playAnim('fakeout', true);
 		moveToBack();
 	}
 
-	function playUppercutPrepAnim()
+	static function playUppercutPrepAnim()
 	{
 		boyfriend.playAnim('uppercutPrep', true);
 		moveToFront();
 	}
 
-	function playUppercutAnim(hit:Bool)
+	static function playUppercutAnim(hit:Bool)
 	{
 		boyfriend.playAnim('uppercut', true);
 		if (hit) FlxG.camera.shake(0.005, 0.25);
 		moveToFront();
 	}
 
-	function playUppercutHitAnim()
+	static function playUppercutHitAnim()
 	{
 		boyfriend.playAnim('uppercutHit', true);
 		FlxG.camera.shake(0.005, 0.25);
 		moveToBack();
 	}
 
-	function playHitHighAnim()
+	static function playHitHighAnim()
 	{
 		boyfriend.playAnim('hitHigh', true);
 		FlxG.camera.shake(0.0025, 0.15);
 		moveToBack();
 	}
 
-	function playHitLowAnim()
+	static function playHitLowAnim()
 	{
 		boyfriend.playAnim('hitLow', true);
 		FlxG.camera.shake(0.0025, 0.15);
 		moveToBack();
 	}
 
-	function playHitSpinAnim()
+	static function playHitSpinAnim()
 	{
 		boyfriend.playAnim('hitSpin', true);
 		FlxG.camera.shake(0.0025, 0.15);
 		moveToBack();
 	}
 
-	function playPunchHighAnim()
+	static function playPunchHighAnim()
 	{
 		boyfriend.playAnim('punchHigh' + doAlternate(), true);
 		moveToFront();
 	}
 
-	function playPunchLowAnim()
+	static function playPunchLowAnim()
 	{
 		boyfriend.playAnim('punchLow' + doAlternate(), true);
 		moveToFront();
 	}
 
-	function playTauntConditionalAnim()
+	static function playTauntConditionalAnim()
 	{
 		if (boyfriend.getAnimationName() == "fakeout")
 			playTauntAnim();
@@ -309,38 +293,38 @@ class PicoBlazinHandler
 			playIdleAnim();
 	}
 
-	function playTauntAnim()
+	static function playTauntAnim()
 	{
 		boyfriend.playAnim('taunt', true);
 		moveToBack();
 	}
 
-	function willMissBeLethal()
+	static function willMissBeLethal()
 	{
 		return PlayState.instance.health <= 0.0 && !PlayState.instance.practiceMode;
 	}
 	
-	function isDarnellPreppingUppercut()
+	static function isDarnellPreppingUppercut()
 	{
 		return dad.getAnimationName() == 'uppercutPrep';
 	}
 
-	function isDarnellInUppercut()
+	static function isDarnellInUppercut()
 	{
 		return dad.getAnimationName() == 'uppercut' || dad.getAnimationName() == 'uppercut-hold';
 	}
 
-	function wasNoteHitPoorly(rating:String)
+	static function wasNoteHitPoorly(rating:String)
 	{
 		return (rating == "bad" || rating == "shit");
 	}
 
-	function isPlayerLowHealth()
+	static function isPlayerLowHealth()
 	{
 		return PlayState.instance.health <= 0.3 * 2;
 	}
 	
-	function moveToBack()
+	static function moveToBack()
 	{
 		var bfPos:Int = FlxG.state.members.indexOf(boyfriendGroup);
 		var dadPos:Int = FlxG.state.members.indexOf(dadGroup);
@@ -350,7 +334,7 @@ class PicoBlazinHandler
 		FlxG.state.members[bfPos] = dadGroup;
 	}
 
-	function moveToFront()
+	static function moveToFront()
 	{
 		var bfPos:Int = FlxG.state.members.indexOf(boyfriendGroup);
 		var dadPos:Int = FlxG.state.members.indexOf(dadGroup);
@@ -360,12 +344,17 @@ class PicoBlazinHandler
 		FlxG.state.members[bfPos] = dadGroup;
 	}
 
-	var boyfriend(get, never):Character;
-	var dad(get, never):Character;
-	var boyfriendGroup(get, never):FlxSpriteGroup;
-	var dadGroup(get, never):FlxSpriteGroup;
-	function get_boyfriend() return PlayState.instance.boyfriend;
-	function get_dad() return PlayState.instance.dad;
-	function get_boyfriendGroup() return PlayState.instance.boyfriendGroup;
-	function get_dadGroup() return PlayState.instance.dadGroup;
+	static function moveToIdle()
+	{
+		FlxG.state.members[originalBFPos] = boyfriendGroup;
+	}
+
+	static var boyfriend(get, never):Character;
+	static var dad(get, never):Character;
+	static var boyfriendGroup(get, never):FlxSpriteGroup;
+	static var dadGroup(get, never):FlxSpriteGroup;
+	static function get_boyfriend() return PlayState.instance.boyfriend;
+	static function get_dad() return PlayState.instance.dad;
+	static function get_boyfriendGroup() return PlayState.instance.boyfriendGroup;
+	static function get_dadGroup() return PlayState.instance.dadGroup;
 }

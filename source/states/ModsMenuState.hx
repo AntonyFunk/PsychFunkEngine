@@ -55,8 +55,9 @@ class ModsMenuState extends MusicBeatState
 	}
 	override function create()
 	{
-		Paths.clearStoredMemory();
-		Paths.clearUnusedMemory();
+		FunkinAssets.cache.clearStoredMemory();
+		FunkinAssets.cache.clearUnusedMemory();
+		
 		persistentUpdate = false;
 
 		modsList = Mods.parseList();
@@ -839,7 +840,7 @@ class ModItem extends FlxSpriteGroup
 
 		if(FileSystem.exists(file))
 		{
-			icon.loadGraphic(Paths.cacheBitmap(file, bmp), true, 150, 150);
+			icon.loadGraphic(FunkinAssets.cache.cacheBitmap(file, bmp), true, 150, 150);
 			if(isPixel) icon.antialiasing = false;
 		}
 		else icon.loadGraphic(Paths.image('unknownMod'), true, 150, 150);

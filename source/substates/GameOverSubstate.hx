@@ -17,28 +17,30 @@ class GameOverSubstate extends ScriptedSubState
 
 	var stagePostfix:String = '';
 
-	public static var characterName:String = 'bf-dead';
+	var targetCameraZoom:Float = 1.0;
+
+	public static var characterName:String = 'bf';
 	public static var deathSoundName:String = 'fnf_loss_sfx';
 	public static var loopSoundName:String = 'gameOver';
 	public static var endSoundName:String = 'gameOverEnd';
-	public static var deathDelay:Float = 0;
 
 	public static var instance:GameOverSubstate;
 	public function new(?playStateBoyfriend:Character = null)
 	{
-		if(playStateBoyfriend != null && playStateBoyfriend.curCharacter == characterName) //Avoids spawning a second boyfriend cuz animate atlas is laggy
+		if (playStateBoyfriend != null)
 		{
 			this.boyfriend = playStateBoyfriend;
+			//PlayState.instance?.remove(playStateBoyfriend);
 		}
+
 		super();
 	}
 
 	public static function resetVariables() {
-		characterName = 'bf-dead';
+		characterName = 'bf';
 		deathSoundName = 'fnf_loss_sfx';
 		loopSoundName = 'gameOver';
 		endSoundName = 'gameOverEnd';
-		deathDelay = 0;
 
 		var _song = PlayState.SONG;
 		if(_song != null)
@@ -63,25 +65,27 @@ class GameOverSubstate extends ScriptedSubState
 
 		Conductor.songPosition = 0;
 
-		if (boyfriend == null) {
-			boyfriend = new Character(PlayState.instance.boyfriend.getScreenPosition().x, PlayState.instance.boyfriend.getScreenPosition().y, characterName, true);
-			boyfriend.x += boyfriend.positionArray[0] - PlayState.instance.boyfriend.positionArray[0];
-			boyfriend.y += boyfriend.positionArray[1] - PlayState.instance.boyfriend.positionArray[1];
-		}
+		if (boyfriend.curCharacter != characterName) boyfriend.changeCharacter(characterName);
+
+		boyfriend.setPosition(boyfriend.positionArray[0], boyfriend.positionArray[1]);
+		boyfriend.x += (PlayState.instance?.boyfriendGroup.x ?? 0);
+		boyfriend.y += (PlayState.instance?.boyfriendGroup.y ?? 0);
+
 		boyfriend.skipDance = true;
+		boyfriend.playAnim('firstDeath');
 		add(boyfriend);
 
-		FlxG.sound.play(Paths.sound(deathSoundName));
-		FlxG.camera.scroll.set();
+		add(camFollow = new FlxObject(0, 0, 1, 1));
+		camFollow.setPosition(
+			boyfriend.getMidpoint().x - 100 - boyfriend.cameraPosition[0] + boyfriend.cameraDeathPosition[0] * (boyfriend.isPlayer ? 1 : -1), 
+			boyfriend.getMidpoint().y - 100 + boyfriend.cameraPosition[1] + boyfriend.cameraDeathPosition[1]
+		);
+
+		FlxG.sound.play(Paths.sound(deathSoundName));		
+
 		FlxG.camera.target = null;
-
-		boyfriend.playAnim('firstDeath');
-
-		camFollow = new FlxObject(0, 0, 1, 1);
-		camFollow.setPosition(boyfriend.getGraphicMidpoint().x + boyfriend.cameraPosition[0], boyfriend.getGraphicMidpoint().y + boyfriend.cameraPosition[1]);
-		FlxG.camera.focusOn(new FlxPoint(FlxG.camera.scroll.x + (FlxG.camera.width / 2), FlxG.camera.scroll.y + (FlxG.camera.height / 2)));
 		FlxG.camera.follow(camFollow, LOCKON, 0.01);
-		add(camFollow);
+		targetCameraZoom = (PlayState.instance?.defaultCamZoom ?? 1.0) * boyfriend.cameraDeathZoom;
 		
 		PlayState.instance?.stagesFunc((stage:BaseStage) -> stage.onGameOverStart());
 		
@@ -112,7 +116,8 @@ class GameOverSubstate extends ScriptedSubState
 				}
 			});
 
-			if (PlayState.instance.gf != null && PlayState.instance.gf.curCharacter == 'nene') {
+			if (PlayState.instance != null && PlayState.instance.gf != null && PlayState.instance.gf.curCharacter == 'nene')
+			{
 				var neneKnife:FlxSprite = new FlxSprite(boyfriend.x - 450, boyfriend.y - 250);
 				neneKnife.frames = Paths.getSparrowAtlas('NeneKnifeToss');
 				neneKnife.animation.addByPrefix('anim', 'knife toss', 24, false);
@@ -140,19 +145,18 @@ class GameOverSubstate extends ScriptedSubState
 		var justPlayedLoop:Bool = false;
 		if (!boyfriend.isAnimationNull() && boyfriend.getAnimationName() == 'firstDeath' && boyfriend.isAnimationFinished()) {
 			boyfriend.playAnim('deathLoop');
-			if(overlay != null && overlay.animation.exists('deathLoop')) {
+			if (overlay != null && overlay.animation.exists('deathLoop')) {
 				overlay.visible = true;
 				overlay.animation.play('deathLoop');
 			}
 			justPlayedLoop = true;
 		}
 
+		FlxG.camera.zoom = FlxMath.lerp(targetCameraZoom, FlxG.camera.zoom, Math.exp(-elapsed * 3.125));
+
 		if(!isEnding)
 		{
-			if (controls.ACCEPT)
-			{
-				endBullshit();
-			}
+			if (controls.ACCEPT) endBullshit();
 			else if (controls.BACK && PlayState.instance?.callOnScripts('onGameOverConfirmPre', [false], true) != psychlua.LuaUtils.Function_Stop)
 			{
 				#if DISCORD_ALLOWED DiscordClient.resetClientID(); #end
@@ -178,9 +182,8 @@ class GameOverSubstate extends ScriptedSubState
 		
 					FlxG.sound.playMusic(Paths.music('freakyMenu'));
 				}
-			} else if (justPlayedLoop) {
-				coolStartDeath();
 			}
+		else if (justPlayedLoop) coolStartDeath();
 			
 			if (FlxG.sound.music.playing)
 				Conductor.songPosition = FlxG.sound.music.time;
@@ -206,13 +209,11 @@ class GameOverSubstate extends ScriptedSubState
 		if (!isEnding && PlayState.instance?.callOnScripts('onGameOverConfirmPre', [true], true) != psychlua.LuaUtils.Function_Stop)
 		{
 			isEnding = true;
-			if (boyfriend.hasAnimation('deathConfirm')) {
-				boyfriend.playAnim('deathConfirm', true);
-			} else if (boyfriend.hasAnimation('deathLoop')) {
-				boyfriend.playAnim('deathLoop', true);
-			}
+			
+			if (boyfriend.hasAnimation('deathConfirm')) boyfriend.playAnim('deathConfirm', true);
+			else if (boyfriend.hasAnimation('deathLoop')) boyfriend.playAnim('deathLoop', true);
 
-			if(overlay != null && overlay.animation.exists('deathConfirm')) {
+			if (overlay != null && overlay.animation.exists('deathConfirm')) {
 				overlay.visible = true;
 				overlay.animation.play('deathConfirm');
 				overlay.offset.set(overlayConfirmOffsets.x, overlayConfirmOffsets.y);
@@ -220,7 +221,8 @@ class GameOverSubstate extends ScriptedSubState
 			FlxG.sound.music.stop();
 			FlxG.sound.play(Paths.music(endSoundName));
 			
-			new FlxTimer().start(.7, (_) -> {
+			FlxTransitionableState.skipNextTransIn = true;
+			new FlxTimer().start(boyfriend.confirmDelay, (_) -> {
 				FlxG.camera.fade(FlxColor.BLACK, 2, false, () -> MusicBeatState.resetState());
 			});
 			

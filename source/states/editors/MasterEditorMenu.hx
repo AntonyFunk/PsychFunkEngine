@@ -27,7 +27,7 @@ class MasterEditorMenu extends ScriptedSubState
 	private var directoryTxt:FlxText;
 	private var curDirectory = 0;
 	private var fadeIn:Bool;
-	
+
 	var textBG:FlxSprite;
 	var bg:FlxSprite;
 	
@@ -63,13 +63,13 @@ class MasterEditorMenu extends ScriptedSubState
 			grpTexts.add(leText);
 		}
 		
-		optionFunctions['Chart Editor'] = () -> LoadingState.loadAndSwitchState(new ChartingState(), false);
-		optionFunctions['Character Editor'] = () -> LoadingState.loadAndSwitchState(new CharacterEditorState(Character.DEFAULT_CHARACTER, false));
-		optionFunctions['Stage Editor'] = () -> LoadingState.loadAndSwitchState(new StageEditorState());
+		optionFunctions['Chart Editor'] = () -> MusicBeatState.switchState(new ChartingState());
+		optionFunctions['Character Editor'] = () ->MusicBeatState.switchState(new CharacterEditorState(Character.DEFAULT_CHARACTER, false));
+		optionFunctions['Stage Editor'] = () -> MusicBeatState.switchState(new StageEditorState());
 		optionFunctions['Week Editor'] = () -> MusicBeatState.switchState(new WeekEditorState());
 		optionFunctions['Menu Character Editor'] = () -> MusicBeatState.switchState(new MenuCharacterEditorState());
-		optionFunctions['Dialogue Editor'] = () -> LoadingState.loadAndSwitchState(new DialogueEditorState(), false);
-		optionFunctions['Dialogue Portrait Editor'] = () -> LoadingState.loadAndSwitchState(new DialogueCharacterEditorState(), false);
+		optionFunctions['Dialogue Editor'] = () -> MusicBeatState.switchState(new DialogueEditorState());
+		optionFunctions['Dialogue Portrait Editor'] = () -> MusicBeatState.switchState(new DialogueCharacterEditorState());
 		optionFunctions['Note Splash Editor'] =  () -> MusicBeatState.switchState(new NoteSplashEditorState());
 		
 		#if MODS_ALLOWED
@@ -95,11 +95,9 @@ class MasterEditorMenu extends ScriptedSubState
 		
 		if (fadeIn) {
 			bg.alpha = .6;
-			
 			openSubState(new CustomFadeTransition(.5, true));
-		} else {
-			FlxTween.tween(bg, {alpha: .6}, .4, {ease: FlxEase.quartInOut});
-		}
+		} 
+		else FlxTween.tween(bg, {alpha: .6}, .4, {ease: FlxEase.quartInOut});
 		
 		persistentUpdate = persistentDraw = true;
 		FlxG.mouse.visible = false;
@@ -143,7 +141,7 @@ class MasterEditorMenu extends ScriptedSubState
 			if (callOnScripts('onAccept', [option], true) != psychlua.LuaUtils.Function_Stop) {
 				if (optionFunc != null) {
 					optionFunc();
-					FlxG.sound.music.volume = 0;
+					FlxG.sound.music.pause();
 					FreeplayState.destroyFreeplayVocals();
 				} else {
 					trace('Option "$option" doesn\'t do anything');

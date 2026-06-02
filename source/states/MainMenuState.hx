@@ -16,18 +16,24 @@ enum abstract MainMenuColumn(String) to String {
 
 class MainMenuState extends ScriptedState
 {
-	public static var psychEngineVersion:String = '1.0.4';
-	public static var modVersion = '0.0.5';
+	public static var psychEngineVersion:String = '0.0.5';
+	public static var modVersion = '0.1.0 ALPHA';
+
 	public static var curSelected:Int = 0;
 	public static var curColumn:MainMenuColumn = CENTER;
+
 	var allowMouse:Bool = true; //Turn this off to block mouse movement in menus
 
 	var menuItems:FlxTypedSpriteGroup<MenuItem>;
 	var selectedItem:MenuItem = null;
+
 	var itemYPadding:Float = 25;
 	var itemSpacing:Float = 140;
+	var itemSpacingMult:Float = 0.15;
+
 	var rightItem:MenuItem;
 	var leftItem:MenuItem;
+	
 	var psychVer:FlxText;
 	var emiVer:FlxText;
 
@@ -36,13 +42,12 @@ class MainMenuState extends ScriptedState
 		'story_mode',
 		'freeplay',
 		#if MODS_ALLOWED 'mods', #end
-		'credits',
-		'options'
+		'credits'
 	];
 	var menuFunctions:Map<String, MenuItem -> Void> = [];
 
 	var rightOption:String = #if ACHIEVEMENTS_ALLOWED 'achievements' #else null #end;
-	var leftOption:String = null;
+	var leftOption:String = 'options';
 	
 	var bg:FlxSprite;
 	var magenta:FlxSprite;
@@ -92,25 +97,29 @@ class MainMenuState extends ScriptedState
 		menuFunctions['freeplay'] ??= (item:MenuItem) -> MusicBeatState.switchState(new FreeplayState());
 		menuFunctions['mods'] ??= (item:MenuItem) -> MusicBeatState.switchState(new ModsMenuState());
 		menuFunctions['credits'] ??= (item:MenuItem) -> MusicBeatState.switchState(new CreditsState());
-		menuFunctions['options'] ??= (item:MenuItem) -> {
-			MusicBeatState.switchState(new OptionsState());
-			OptionsState.onPlayState = false;
-			if (PlayState.SONG != null) {
+		menuFunctions['options'] ??= (item:MenuItem) ->
+		{
+			MusicBeatState.switchState(new OptionsState(false));
+
+			if (PlayState.SONG != null)
+			{
 				PlayState.SONG.arrowSkin = null;
 				PlayState.SONG.splashSkin = null;
 				PlayState.stageUI = 'normal';
 			}
 		};
-		#if ACHIEVEMENTS_ALLOWED menuFunctions['achievements'] ??= (item:MenuItem) -> MusicBeatState.switchState(new AchievementsMenuState()); #end
+		#if ACHIEVEMENTS_ALLOWED
+		menuFunctions['achievements'] ??= (item:MenuItem) -> MusicBeatState.switchState(new AchievementsMenuState());
+		#end
 		
 		for (option in optionShit)
 			addMenuItem(option);
 
-		emiVer = new FlxText(12, FlxG.height - 24, 0, 'Built on Psych Engine $psychEngineVersion', 11);
+		emiVer = new FlxText(12, FlxG.height - 24, 0, 'Built on Psych Engine Mint $psychEngineVersion', 11);
 		emiVer.scrollFactor.set();
 		emiVer.setFormat(Paths.font("vcr.ttf"), 15, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(emiVer);
-		psychVer = new FlxText(12, FlxG.height - 40, 0, 'Psych Engine Mint $modVersion', 12);
+		psychVer = new FlxText(12, FlxG.height - 40, 0, 'Psych Funk Engine $modVersion', 12);
 		psychVer.scrollFactor.set();
 		psychVer.setFormat(Paths.font("vcr.ttf"), 15, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(psychVer);
@@ -172,6 +181,20 @@ class MainMenuState extends ScriptedState
 		var item:MenuItem = new MenuItem(0, 0, name, onAccept ?? menuFunctions[name]);
 		item.column = column;
 		
+		if (name == leftOption || name == rightOption) {
+			item.animation.remove('selected');
+
+			item.animation.addByPrefix('selected', '$name selected', 24, false);
+			item.animation.addByIndices('selected-loop', '$name selected', [4,5,6,7,8,9], '', 24, true);
+
+			item.animation.onFinish.add((animName:String) -> {
+				switch(animName) {
+					case 'selected':
+						item.animation.play('$animName-loop');
+				}
+			});
+		}
+		
 		switch (column) {
 			case CENTER:
 				menuItems.add(item);
@@ -223,14 +246,14 @@ class MainMenuState extends ScriptedState
 	}
 	
 	function updateYScroll():Void {
-		var itemYScroll:Float = Math.min(1, Math.max(menuItems.height - FlxG.height + itemYPadding, 0) / FlxG.height * .35 + .25);
+		var itemYScroll:Float = Math.min(1, Math.max(menuItems.height - FlxG.height + itemYPadding, 0) / FlxG.height * .35 + .25 * itemSpacingMult);
 		menuItems?.scrollFactor.set(.04, itemYScroll);
 		
 		var yScroll:Float = (.7 / menuItems.length);
 		leftItem?.scrollFactor.set(0, yScroll * .25);
 		rightItem?.scrollFactor.set(0, yScroll * .25);
 		
-		bg.scrollFactor.set(0, yScroll * .75);
+		bg.scrollFactor.set(0, yScroll * .75 * itemSpacingMult);
 		magenta.scrollFactor.copyFrom(bg.scrollFactor);
 	}
 	

@@ -1361,6 +1361,10 @@
 		"bpm": 182,
 		"needsVoices": true,
 		"song": "2Hot",
+		"gameOverChar": "pico-dead",
+		"gameOverSound": "fnf_loss_sfx-pico",
+		"gameOverLoop": "gameOver-pico",
+		"gameOverEnd": "gameOverEnd-pico",
 		"offset": 0
 	}
 }

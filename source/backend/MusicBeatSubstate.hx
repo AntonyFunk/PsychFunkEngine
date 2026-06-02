@@ -3,14 +3,16 @@ package backend;
 import shaders.ErrorHandledShader;
 
 #if GLOBAL_SCRIPTS
-import psychlua.GlobalScriptHandler;
+import scripting.hscript.FunkinModuleCollection;
+import scripting.GlobalScripts;
 #end
 
 /**
  * MusicBeatSubstate is the base for most states and sub-states in the game.
  * It automatically handles rhythm events (step/beat/measure hits) and some scripting features.
 */
-class MusicBeatSubstate extends flixel.FlxSubState {
+class MusicBeatSubstate extends flixel.FlxSubState
+{
 	var stepsToDo:Int = 0;
 	
 	/**
@@ -66,11 +68,13 @@ class MusicBeatSubstate extends flixel.FlxSubState {
 	
 	public var parent:flixel.FlxState = null;
 	
-	public function new() {
+	public function new()
+	{
 		super();
 	}
 	
-	public override function create() {
+	public override function create()
+	{
 		parent = _parentState;
 		subStateClosed.add((_) -> updatePresence());
 		
@@ -80,31 +84,28 @@ class MusicBeatSubstate extends flixel.FlxSubState {
 		updatePresence();
 		postCreate();
 	}
+
 	/**
 	 * Called in a state before finishing creation.
 	*/
-	public function preCreate():Void {
+	public function preCreate()
+	{
 		_pre = true;
-		
 		_preCreate();
 	}
 	/**
 	 * Called in a state after finishing creation.
 	*/
-	public function postCreate():Void {
-		_postCreate();
-	}
-	function _preCreate():Void {
-		callGlobal('onCreateSubState', [this, Type.getClass(this)]);
-	}
-	function _postCreate():Void {
-		callGlobal('onCreateSubStatePost', [this, Type.getClass(this)]);
-	}
+	public function postCreate() _postCreate();
+
+	function _preCreate() callGlobal('onCreateSubState', [this, Type.getClass(this)]);
+	function _postCreate() callGlobal('onCreateSubStatePost', [this, Type.getClass(this)]);
 	
 	/**
 	 * Updates the Discord Rich Presence.
 	*/
-	public function updatePresence():Void {
+	public function updatePresence()
+	{
 		#if DISCORD_ALLOWED
 		if (autoUpdateRPC && (rpcDetails != null || rpcState != null))
 			DiscordClient.changePresence(rpcDetails, rpcState);
@@ -115,7 +116,8 @@ class MusicBeatSubstate extends flixel.FlxSubState {
 	 * Gets the `Controls` instance.
 	*/
 	public var controls(get, never):Controls;
-	function get_controls():Controls {
+	function get_controls():Controls
+	{
 		return Controls.instance;
 	}
 	
@@ -123,19 +125,21 @@ class MusicBeatSubstate extends flixel.FlxSubState {
 	 * Gets this instance's custom variables map. Alias for `extraData`.
 	*/
 	public var variables(get, never):Map<String, Dynamic>;
-	function get_variables():Map<String, Dynamic> {
+	function get_variables():Map<String, Dynamic>
+	{
 		return extraData;
 	}
 	
-	public override function update(elapsed:Float) {
-		if (subState == null) {
+	public override function update(elapsed:Float)
+	{
+		if (subState == null)
+		{
 			MusicBeatState.timePassedOnState += elapsed;
-			
-			if (FlxG.keys.justPressed.F5 #if GLOBAL_SCRIPTS && !GlobalScriptHandler.resetting #end) { // add keybind?
-				reset();
-			} #if GLOBAL_SCRIPTS else {
-				GlobalScriptHandler.resetting = false;
-			} #end
+
+			#if DEBUG_SCRIPTS
+			if (FlxG.keys.justPressed.F5 #if GLOBAL_SCRIPTS && !GlobalScripts.resetting #end) reset(); // add keybind?
+			#if GLOBAL_SCRIPTS else GlobalScripts.resetting = false; #end
+			#end
 		}
 		
 		var oldStep:Int = curStep;
@@ -143,66 +147,73 @@ class MusicBeatSubstate extends flixel.FlxSubState {
 		updateBeat();
 		updateSection();
 		
-		if (oldStep != curStep) {
-			if (keepUp) {
+		if (oldStep != curStep)
+		{
+			if (keepUp)
+			{
 				while (++ oldStep < curStep)
 					stepHit(oldStep);
 			}
+
 			stepHit(curStep);
 
-			if (PlayState.SONG != null) {
-				if (oldStep < curStep) {
-					forwardSection();
-				} else {
-					rollbackSection();
-				}
+			if (PlayState.SONG != null)
+			{
+				if (oldStep < curStep) forwardSection();
+				else rollbackSection();
 			}
 		}
 		
-		if (FlxG.save.data != null)
-			FlxG.save.data.fullscreen = FlxG.fullscreen;
+		if (FlxG.save.data != null) FlxG.save.data.fullscreen = FlxG.fullscreen;
 			
 		stagesFunc((stage:BaseStage) -> stage.update(elapsed));
 		super.update(elapsed);
 	}
+	
 	/**
 	 * Resets the current state.
 	*/
-	public function reset():Void {
-		#if GLOBAL_SCRIPTS GlobalScriptHandler.refreshScripts(FlxG.keys.pressed.SHIFT); #end
+	public function reset()
+	{
+		MusicBeatState.hardRefresh = FlxG.keys.pressed.SHIFT;
 		MusicBeatState.switchState(FlxG.state);
 	}
 	
-	function forwardSection():Void {
+	function forwardSection()
+	{
 		if (stepsToDo < 1) stepsToDo = Math.round(getBeatsOnSection() * 4);
 		
 		if (curStep == 0) sectionHit(0); // idgaf
 		
-		while (curStep >= stepsToDo) {
-			curSection ++;
+		while (curStep >= stepsToDo)
+		{
+			curSection++;
 			updateSection();
 			sectionHit(curSection);
 			
 			stepsToDo += Math.round(getBeatsOnSection() * 4);
 		}
 	}
-	function rollbackSection():Void {
+	function rollbackSection()
+	{
 		if (curStep < 0) return;
-
 		var lastSection:Int = curSection;
+
 		curSection = 0;
 		stepsToDo = 0;
-		for (section in PlayState.SONG.notes) {
-			if (section != null) {
+		for (section in PlayState.SONG.notes)
+		{
+			if (section != null)
+			{
 				stepsToDo += Math.round(getBeatsOnSection() * 4);
-				if (stepsToDo > curStep)
-					break;
+				if (stepsToDo > curStep) break;
 				
-				curSection ++;
+				curSection++;
 			}
 		}
 		
-		if (curSection > lastSection) {
+		if (curSection > lastSection)
+		{
 			updateSection();
 			sectionHit(curSection);
 		}
@@ -214,34 +225,41 @@ class MusicBeatSubstate extends flixel.FlxSubState {
 	 * 
 	 * @return 	Amount of beats in the measure.
 	*/
-	public function getBeatsOnSection(?section:Int):Null<Float> {
+	public function getBeatsOnSection(?section:Int):Null<Float>
+	{
 		var val:Null<Float> = 4;
 		section ??= curSection;
 		
 		if (PlayState.SONG != null && PlayState.SONG.notes[section] != null)
+		{
 			val = PlayState.SONG.notes[section].sectionBeats;
+		}	
 		
 		return (val == null ? 4 : val);
 	}
 	
-	function updateStep():Void {
+	function updateStep()
+	{
 		var lastChange = Conductor.getBPMFromSeconds(Conductor.songPosition);
 
 		var shit = ((Conductor.songPosition - delay) - lastChange.songTime) / lastChange.stepCrochet;
 		curDecStep = lastChange.stepTime + shit;
 		curStep = Math.floor(curDecStep);
 	}
-	function updateBeat():Void {
+	function updateBeat()
+	{
 		curDecBeat = curDecStep / 4;
 		curBeat = Math.floor(curDecBeat);
 	}
-	function updateSection():Void {
+	function updateSection()
+	{
 		if (PlayState.SONG == null) return;
 		
 		var lastSectionTime:Float = 0;
 		var curCrochet:Float = Conductor.crochet;
 		
-		for (i => section in PlayState.SONG.notes) {
+		for (i => section in PlayState.SONG.notes)
+		{
 			curCrochet = Conductor.getBPMFromSeconds(lastSectionTime).stepCrochet * 4;
 			var nextSectionTime = lastSectionTime + getBeatsOnSection(i) * curCrochet;
 			
@@ -259,15 +277,16 @@ class MusicBeatSubstate extends flixel.FlxSubState {
 	 * 
 	 * @param 	step 	The current step.
 	*/
-	public function stepHit(step:Int):Void {
-		stagesFunc(function(stage:BaseStage) {
+	public function stepHit(step:Int)
+	{
+		stagesFunc((stage:BaseStage) ->
+		{
 			stage.curDecStep = curDecStep;
 			stage.curStep = step;
 			stage.stepHit();
 		});
 
-		if (step % 4 == 0)
-			beatHit(curBeat);
+		if (step % 4 == 0) beatHit(curBeat);
 		
 		callGlobal('onStepHit', [step]);
 	}
@@ -276,8 +295,10 @@ class MusicBeatSubstate extends flixel.FlxSubState {
 	 * 
 	 * @param 	beat 	The current beat.
 	*/
-	public function beatHit(beat:Int):Void {
-		stagesFunc(function(stage:BaseStage) {
+	public function beatHit(beat:Int)
+	{
+		stagesFunc((stage:BaseStage) ->
+		{
 			stage.curDecBeat = curDecBeat;
 			stage.curBeat = beat;
 			stage.beatHit();
@@ -307,8 +328,9 @@ class MusicBeatSubstate extends flixel.FlxSubState {
 	 * 
 	 * @return 	Return value in last called global script.
 	*/
-	public static inline function callGlobal(fun:String, ?params:Array<Dynamic>):Dynamic {
-		#if GLOBAL_SCRIPTS return GlobalScriptHandler.call(fun, params);
+	public static inline function callGlobal(fun:String, ?params:Array<Dynamic>):Dynamic
+	{
+		#if GLOBAL_SCRIPTS return GlobalScripts.call(fun, params);
 		#else return null; #end
 	}
 	
@@ -321,9 +343,10 @@ class MusicBeatSubstate extends flixel.FlxSubState {
 	 * 
 	 * @param 	func 	The function to call for each stage.
 	*/
-	public function stagesFunc(func:BaseStage->Void) {
+	public function stagesFunc(func:BaseStage->Void)
+	{
 		for (stage in stages)
-			if(stage != null && stage.exists && stage.active)
+			if (stage != null && stage.exists && stage.active)
 				func(stage);
 	}
 	
@@ -334,7 +357,8 @@ class MusicBeatSubstate extends flixel.FlxSubState {
 	 * @param 	color 	The color of the text to add.
 	 * @param 	size 	Optional parameter for the size of the text to add.
 	*/
-	public function addTextToDebug(text:String, ?color:FlxColor, ?size:Int) {
+	public function addTextToDebug(text:String, ?color:FlxColor, ?size:Int)
+	{
 		ScriptedState.debugPrint(text, color, size);
 	}
 	
@@ -343,7 +367,8 @@ class MusicBeatSubstate extends flixel.FlxSubState {
 	 * 
 	 * @param 	subState 	The sub-state to open.
 	*/
-	public override function openSubState(subState:flixel.FlxSubState):Void {
+	public override function openSubState(subState:flixel.FlxSubState)
+	{
 		if (callGlobal('onOpenSubState', [subState, Type.getClass(subState)]) != psychlua.LuaUtils.Function_Stop)
 			super.openSubState(subState);
 	}
@@ -362,11 +387,12 @@ class MusicBeatSubstate extends flixel.FlxSubState {
 	 * 
 	 * @return 	A new `ErrorHandledRuntimeShader`.
 	*/
-	public function createRuntimeShader(shaderName:String):ErrorHandledRuntimeShader {
-		if (!ClientPrefs.data.shaders)
-			return new ErrorHandledRuntimeShader(shaderName);
+	public function createRuntimeShader(shaderName:String):ErrorHandledRuntimeShader
+	{
+		if (!ClientPrefs.data.shaders) return new ErrorHandledRuntimeShader(shaderName);
 		
-		if (!runtimeShaders.exists(shaderName) && !initRuntimeShader(shaderName)) {
+		if (!runtimeShaders.exists(shaderName) && !initRuntimeShader(shaderName))
+		{
 			FlxG.log.warn('Shader $shaderName is missing!');
 			return new ErrorHandledRuntimeShader(shaderName);
 		}
@@ -383,35 +409,34 @@ class MusicBeatSubstate extends flixel.FlxSubState {
 	 * 
 	 * @return 	Whether or not the shader data could be initialized.
 	*/
-	public function initRuntimeShader(name:String, glslVersion:Int = 120):Bool {
-		if (!ClientPrefs.data.shaders)
-			return false;
+	public function initRuntimeShader(name:String, glslVersion:Int = 120):Bool
+	{
+		if (!ClientPrefs.data.shaders) return false;
 		
-		if (runtimeShaders.exists(name)) {
+		if (runtimeShaders.exists(name))
+		{
 			FlxG.log.warn('Shader $name is already initialized!');
 			return true;
 		}
 		
-		for (folder in Mods.directoriesWithFile(Paths.getSharedPath(), 'shaders')) {
+		for (folder in Mods.directoriesWithFile(Paths.getSharedPath(), 'shaders'))
+		{
 			var frag:String = '$folder/$name.frag';
 			var vert:String = '$folder/$name.vert';
 			
-			if (FileSystem.exists(frag)) {
-				frag = Paths.getTextFromFile(frag);
-			} else {
-				frag = null;
-			}
-			if (FileSystem.exists(vert)) {
-				vert = Paths.getTextFromFile(vert);
-			} else {
-				vert = null;
-			}
+			if (FileSystem.exists(frag)) frag = Paths.getTextFromFile(frag);
+			else frag = null;
 
-			if (frag != null || vert != null) {
+			if (FileSystem.exists(vert)) vert = Paths.getTextFromFile(vert);
+			else vert = null;
+
+			if (frag != null || vert != null)
+			{
 				runtimeShaders.set(name, [frag, vert]);
 				return true;
 			}
 		}
+
 		#if (SCRIPTS_ALLOWED)
 		Log.print('No .frag or .vert code found for shader "$name"!', ERROR);
 		#else
@@ -428,6 +453,9 @@ class MusicBeatSubstate extends flixel.FlxSubState {
 	 * 
 	 * @return 	A new `ErrorHandledRuntimeShader`.
 	*/
-	public function initLuaShader(name:String, ?glslVersion:Int):Bool { return initRuntimeShader(name, glslVersion); }
+	public function initLuaShader(name:String, ?glslVersion:Int):Bool
+	{
+		return initRuntimeShader(name, glslVersion);
+	}
 	#end
 }
