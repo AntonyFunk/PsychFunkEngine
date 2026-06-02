@@ -1529,11 +1529,10 @@ class ChartingState extends ScriptedState implements PsychUIEventHandler.PsychUI
 				note.animation.update(elapsed); //let selected notes be animated for better visibility
 				
 				if (note.dragging) {
-					if (!FlxG.mouse.pressed) {
-						note.dragging = false;
-					} else if (note.isEvent) {
-						continue; // lol
-					} else {
+					if (!FlxG.mouse.pressed) note.dragging = false;
+					else if (note.isEvent) continue; // lol
+					else
+					{
 						var shift:Bool = FlxG.keys.pressed.SHIFT;
 						
 						var diffY:Float = (FlxG.mouse.y - gridBg.y);
@@ -1541,7 +1540,7 @@ class ChartingState extends ScriptedState implements PsychUIEventHandler.PsychUI
 						
 						var noteDiffY:Float = diffY;
 						if (downScroll) noteDiffY = (gridBg.height - diffY - (shift ? 0 : GRID_SIZE));
-						noteDiffY -= (note.chartY * GRID_SIZE * curZoom);
+						noteDiffY -= ((note.chartY - cachedSectionRow[curSec]) * GRID_SIZE * curZoom);
 						
 						var stepLength:Float = Math.max(noteDiffY / GRID_SIZE / curZoom, 0);
 						var endMs:Float = Conductor.stepToSeconds(Conductor.getStep(note.strumTime) + stepLength);
