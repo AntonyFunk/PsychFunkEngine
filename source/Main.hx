@@ -122,9 +122,6 @@ class Main extends Sprite
 		
 		FlxG.save.bind('funkin', CoolUtil.getSavePath());
 		Controls.instance = new Controls();
-
-		Language.reloadPhrases();
-		Difficulty.resetList();
 		
 		#if GLOBAL_SCRIPTS GlobalScripts.init(); #end
 		#if HSCRIPT_ALLOWED FunkinHscript.init(); #end
@@ -136,6 +133,9 @@ class Main extends Sprite
 		
 		ClientPrefs.loadPrefs();
 		Highscore.load();
+
+		Language.reloadPhrases();
+		Difficulty.resetList();
 		
 		substates.OutdatedSubState.updateVersion = CoolUtil.checkForUpdates();
 		

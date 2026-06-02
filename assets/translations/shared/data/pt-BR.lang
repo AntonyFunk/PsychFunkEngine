@@ -36,12 +36,12 @@ charting_mode: "Modo Charter"
 blueballed: "Broxadas: {1}"
 
 // Main Menu
-images/mainmenu/menu_story_mode: "images/pt-BR/mainmenu/menu_story_mode"
-images/mainmenu/menu_credits: "images/pt-BR/mainmenu/menu_credits"
+images/mainmenu/menu_story_mode: "pt-BR/images/mainmenu/menu_story_mode"
+images/mainmenu/menu_credits: "pt-BR/images/mainmenu/menu_credits"
 outdated_version: "Você está usando uma versão antiga da Psych Engine Mint!\n(Atualmente usando a {1}, versão mais recente é a {2})\n\n\n-----------------------------------------------\n\n\nPressione ENTER para visitar a página do GameBanana ou\n\npressione ESCAPE para ignorar esta mensagem.\n\n\nVocê pode desabilitar este aviso desmarcando a opção\n\n"Verificar por Atualizações" no menu de Opções.\n\n\n-----------------------------------------------\n\n\nObrigado por usar esta engine!"
 
 // Story Mode
-images/Menu_Tracks: "images/pt-BR/Menu_Tracks"
+images/Menu_Tracks: "pt-BR/images/Menu_Tracks"
 week_score: "PONTUAÇÃO: {1}"
 
 storyname_week5: "NEVASCA VERMELHA"
@@ -268,5 +268,5 @@ difficulty_easy: "Fácil"
 difficulty_normal: "Normal"
 difficulty_hard: "Difícil"
 
-images/menudifficulties/easy: "images/pt-BR/menudifficulties/easy"
-images/menudifficulties/hard: "images/pt-BR/menudifficulties/hard"
+images/menudifficulties/easy: "pt-BR/images/menudifficulties/easy"
+images/menudifficulties/hard: "pt-BR/images/menudifficulties/hard"

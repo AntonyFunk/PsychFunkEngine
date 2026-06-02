@@ -12,8 +12,6 @@ import flixel.graphics.frames.FlxFramesCollection;
 import backend.Mods;
 #end
 
-using haxe.io.Path;
-
 class Paths
 {
 	public static inline final ASSETS = 'assets';
@@ -33,9 +31,10 @@ class Paths
 
 	public static function getPath(file:String, ?parentFolder:String, ?modsAllowed:Bool = true):String
 	{
-		if (file.startsWith(ASSETS) || file.startsWith(MODS)) return file;
+		if (parentFolder == null) file = Language.getFileTranslation(file);
+		else file = Language.getFileTranslation('$parentFolder/$file');
 
-		if (parentFolder != null) file = '$parentFolder/$file';
+		if (file.startsWith(ASSETS) || file.startsWith(MODS)) return file;
 		
 		#if MODS_ALLOWED
 		if (modsAllowed)
@@ -65,7 +64,7 @@ class Paths
 		for (ext in extensions)
 		{
 			final path = getPath('$key.$ext', parentFolder, modsAllowed);
-			if (fileExists(path)) return path;
+			if (fileExists(path, parentFolder, modsAllowed)) return path;
 		}
 		
 		return getPath(key, parentFolder, modsAllowed);
@@ -194,6 +193,7 @@ class Paths
 	 */
 	static public function image(key:String, ?folder:String = null, ?allowGPU:Bool = true, ?modsAllowed:Bool = true):FlxGraphic
 	{
+		trace(getPath('images/$key.png', folder, modsAllowed));
 		return FunkinAssets.getGraphic(getPath('images/$key.png', folder, modsAllowed), true, allowGPU);
 	}
 
@@ -212,11 +212,11 @@ class Paths
 		var entries = readDirectory(path, parentFolder, modsAllowed);
 		if (extensions == null) return entries;
 
-		var extsDot = extensions.map((e) -> return '.' + e.toLowerCase());
+		var extsDot = extensions.map((e:String) -> return '.' + e.toLowerCase());
 
 		if (entries != null && entries.length > 0)
 		{
-			return entries.filter((name) ->
+			return entries.filter((name:String) ->
 			{
 				final lower = name.toLowerCase();
 				for (ext in extsDot) if (lower.endsWith(ext)) return true;
@@ -228,12 +228,12 @@ class Paths
 		return [];
 	}
 
-	public static function listPathsInDirectory(path:String, ?extensions:Array<String> = null, ?parentFolder:String = null, ?modsAllowed:Bool = true):Array<String>
+	public static function listPathsInDirectory(key:String, ?extensions:Array<String> = null, ?parentFolder:String = null, ?modsAllowed:Bool = true):Array<String>
 	{
-		final base = getPath(path, parentFolder, modsAllowed);
-		final names = listFilesInDirectory(path, extensions, parentFolder, modsAllowed);
+		final path = getPath(key, parentFolder, modsAllowed);
+		final names = listFilesInDirectory(key, extensions, parentFolder, modsAllowed);
 
-		return names.map((name) -> return '$base/$name');
+		return names.map((name:String) -> return '$path/$name');
 	}
 
 	public static function getTextFromFile(key:String, ?parentFolder:String, ?modsAllowed:Bool = true):String
@@ -247,7 +247,7 @@ class Paths
 		return FunkinAssets.exists(getPath(key, parentFolder, modsAllowed));
 	}
 
-	static public function getAtlas(key:String, ?parentFolder:String = null, ?allowGPU:Bool = true):FlxAtlasFrames
+	static public function getAtlas(key:String, ?parentFolder:String = null, ?allowGPU:Bool = true, ?modsAllowed:Bool = true):FlxAtlasFrames
 	{
 		var useMod = false;
 		var imageLoaded:FlxGraphic = image(key, parentFolder, allowGPU);
@@ -256,6 +256,7 @@ class Paths
 		if (FunkinAssets.exists(myXml))
 		{
 			#if MODS_ALLOWED
+			trace(myXml);
 			return FlxAtlasFrames.fromSparrow(imageLoaded, (useMod ? getTextFromFile(myXml) : myXml));
 			#else
 			return FlxAtlasFrames.fromSparrow(imageLoaded, myXml);
@@ -277,7 +278,7 @@ class Paths
 		return getPackerAtlas(key, parentFolder);
 	}
 	
-	static public function getMultiAtlas(keys:Array<String>, ?parentFolder:String = null, ?allowGPU:Bool = true):FlxAtlasFrames
+	static public function getMultiAtlas(keys:Array<String>, ?parentFolder:String = null, ?allowGPU:Bool = true, ?modsAllowed:Bool = true):FlxAtlasFrames
 	{
 		var parentFrames:FlxAtlasFrames = Paths.getAtlas(keys[0].trim());
 		if (keys.length > 1)
@@ -287,7 +288,7 @@ class Paths
 			parentFrames.addAtlas(original, true);
 			for (i in 1...keys.length)
 			{
-				var extraFrames:FlxAtlasFrames = Paths.getAtlas(keys[i].trim(), parentFolder, allowGPU);
+				var extraFrames:FlxAtlasFrames = Paths.getAtlas(keys[i].trim(), parentFolder, allowGPU, modsAllowed);
 				if (extraFrames != null) parentFrames.addAtlas(extraFrames, true);
 			}
 		}
@@ -309,9 +310,9 @@ class Paths
 				var frames:FlxAtlasFrames = null;
 				if (!fileExists('images/$key/Animation.json', parentFolder, modsAllowed))
 				{
-					frames = Paths.getAtlas(key, parentFolder, allowGPU);
+					frames = Paths.getAtlas(key, parentFolder, allowGPU, modsAllowed);
 				}
-				else frames = Paths.getAnimateAtlas(key, parentFolder);
+				else frames = Paths.getAnimateAtlas(key, parentFolder, allowGPU, modsAllowed);
 		
 				if (frames == null)
 				{
@@ -329,7 +330,7 @@ class Paths
 
 	inline static public function getSparrowAtlas(key:String, ?parentFolder:String, ?allowGPU:Bool = true, modsAllowed:Bool = true):FlxAtlasFrames
 	{
-		final directPath = getPath('images/$key.png', parentFolder, modsAllowed).withoutExtension();
+		final directPath = getPath('images/$key.png', parentFolder, modsAllowed);
 		final tempFrames = tempAtlasFramesCache.get(directPath);
 		if (tempFrames != null)
 		{
@@ -351,9 +352,9 @@ class Paths
 		var txt:String = modsTxt(key);
 		if (FileSystem.exists(txt)) txtExists = true;
 
-		return FlxAtlasFrames.fromSpriteSheetPacker(imageLoaded, (txtExists ? getTextFromFile(txt) : getPath(Language.getFileTranslation('images/$key') + '.txt', parentFolder)));
+		return FlxAtlasFrames.fromSpriteSheetPacker(imageLoaded, (txtExists ? getTextFromFile(txt) : getPath('images/$key.txt', parentFolder)));
 		#else
-		return FlxAtlasFrames.fromSpriteSheetPacker(imageLoaded, getPath(Language.getFileTranslation('images/$key') + '.txt', parentFolder));
+		return FlxAtlasFrames.fromSpriteSheetPacker(imageLoaded, getPath('images/$key.txt', parentFolder));
 		#end
 	}
 
@@ -366,9 +367,9 @@ class Paths
 		var json:String = modsImagesJson(key);
 		if (FileSystem.exists(json)) jsonExists = true;
 
-		return FlxAtlasFrames.fromTexturePackerJson(imageLoaded, (jsonExists ? getTextFromFile(json) : getPath(Language.getFileTranslation('images/$key') + '.json', parentFolder)));
+		return FlxAtlasFrames.fromTexturePackerJson(imageLoaded, (jsonExists ? getTextFromFile(json) : getPath('images/$key.json', parentFolder)));
 		#else
-		return FlxAtlasFrames.fromTexturePackerJson(imageLoaded, getPath(Language.getFileTranslation('images/$key') + '.json', parentFolder));
+		return FlxAtlasFrames.fromTexturePackerJson(imageLoaded, getPath('images/$key.json', parentFolder));
 		#end
 	}
 
@@ -379,7 +380,7 @@ class Paths
 			return getAtlas(key, parentFolder, allowGPU);
 		}
 		
-		var atlas = FlxAnimateFrames.fromAnimate(getPath(Language.getFileTranslation('images/$key'), parentFolder, modsAllowed), null, null, null, true);
+		var atlas = FlxAnimateFrames.fromAnimate(getPath('images/$key', parentFolder, modsAllowed), null, null, null, true);
 		
 		if (atlas.parent != null)
 		{
