@@ -60,6 +60,17 @@ class Paths
 		return assets(file);
 	}
 
+	public static function getFilePath(key:String, extensions:Array<String>, ?parentFolder:String, ?modsAllowed:Bool = true):String
+	{
+		for (ext in extensions)
+		{
+			final path = getPath('$key.$ext', parentFolder, modsAllowed);
+			if (fileExists(path)) return path;
+		}
+		
+		return getPath(key, parentFolder, modsAllowed);
+	}
+
 	inline static public function assets(file:String = ''):String
 	{
 		return '$ASSETS/$file';
@@ -151,7 +162,7 @@ class Paths
 
 		songKey = getPath('songs/$songKey.$SOUND_EXT', null, modsAllowed);
 		
-		return FunkinAssets.getSoundUnsafe(songKey);
+		return FunkinAssets.getSoundDirectly(songKey);
 	}
 
 	/**
@@ -188,7 +199,7 @@ class Paths
 
 	inline static public function font(key:String, ?folder:String, ?modsAllowed:Bool = true):String
 	{
-		return getFileWithExts('fonts/$key', ['ttf', 'otf'], folder, modsAllowed);
+		return getFilePath('fonts/$key', ['ttf', 'otf'], folder, modsAllowed);
 	}
 
 	public static function readDirectory(path:String, ?parentFolder:String = null, ?modsAllowed:Bool = true):Array<String>
@@ -229,17 +240,6 @@ class Paths
 	{
 		key = getPath(key, parentFolder, modsAllowed);
 		return FunkinAssets.exists(key) ? FunkinAssets.getContent(key) : '';
-	}
-
-	public static function getFileWithExts(key:String, extensions:Array<String>, ?parentFolder:String, ?modsAllowed:Bool = true):String
-	{
-		for (ext in extensions)
-		{
-			final path = getPath('$key.$ext', parentFolder, modsAllowed);
-			if (fileExists(path)) return path;
-		}
-		
-		return getPath(key, parentFolder, modsAllowed);
 	}
 
 	public static inline function fileExists(key:String, ?parentFolder:String = null, ?modsAllowed:Bool = true)

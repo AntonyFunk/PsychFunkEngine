@@ -48,6 +48,7 @@ class FunkinCache
 
 	/**
 	 * Clears all graphics and sounds that are considered inactive. Flags everything to be inactive as well.
+	 * 
 	 * use `clearUnusedMemory` afterwards to purge everything
 	 */
 	public function clearStoredMemory()
@@ -85,8 +86,10 @@ class FunkinCache
 	
 	/**
 	 * Remove asset from the cache
+	 * 
 	 * @param key the id to use in the cache.
 	 * @param dispose
+	 * 
 	 * @return Bool
 	 */
 	public function removeCache(key:String, dispose:Bool = true):Bool
@@ -112,6 +115,7 @@ class FunkinCache
 
 	/**
 	 * Push `BitmapData` instance to GPU cache.
+	 * 
 	 * @param bitmap The bitmap to use.
 	 */
 	public function gpuCacheBitmap(bitmap:BitmapData)
@@ -136,9 +140,11 @@ class FunkinCache
 	
 	/**
 	 * Caches and returns a new `FlxGraphic` instance.
+	 * 
 	 * @param key the id to use in the cache.
 	 * @param bitmap The bitmap to use.
 	 * @param allowGPU if true, will only store in video memory.
+	 * 
 	 * @return FlxGraphic
 	 */
 	public function cacheBitmap(key:String, bitmap:BitmapData, allowGPU:Bool = true):FlxGraphic
@@ -157,6 +163,7 @@ class FunkinCache
 
 	/**
 	 * Caches and returns a `Sound` instance.
+	 * 
 	 * @param key the id to use in the cache.
 	 * @param sound The `Sound` instance to cache.
 	 */
@@ -170,6 +177,7 @@ class FunkinCache
 
 	/**
 	 * Disposes of a `FlxGraphic`
+	 * 
 	 * @param graphic 
 	 */
 	public function disposeGraphic(graphic:Null<FlxGraphic>)

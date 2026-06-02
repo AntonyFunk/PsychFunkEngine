@@ -23,42 +23,6 @@ class FunkinAssets
 	public static final cache:FunkinCache = new FunkinCache();
 	
 	/**
-	 * Safer alternative to directly using `haxe.Json.parse`
-	 */
-	public static function parseJson(content:String, ?pos:haxe.PosInfos):Null<Any>
-	{
-		try
-		{
-			return haxe.Json.parse(content);
-		}
-		catch (e)
-		{
-			FlxG.log.warn('failed to parse content\nException: ${e.message}');
-			return null;
-		}
-	}
-	
-	/**
-	 * Parses a json using the json5 format.
-	 */
-	public static function parseJson5(content:String, ?pos:haxe.PosInfos):Null<Any>
-	{
-		try
-		{
-			#if json5hx
-			return haxe.Json5.parse(content);
-			#else
-			return haxe.Json.parse(content);
-			#end
-		}
-		catch (e)
-		{
-			FlxG.log.warn('failed to parse content\nException: ${e.message}');
-			return null;
-		}
-	}
-	
-	/**
 	 * Retrieves the Bytes of a given file from its path
 	 */
 	public static function getBytes(path:String):Bytes
@@ -147,12 +111,12 @@ class FunkinAssets
 	}
 	
 	/**
-	 * retrieves a flxgraphic instance from key.
+	 * retrieves a `FlxGraphic` instance directly from key.
 	 * 
 	 * @param useCache Retrieves from the cache if possible. Otherwise, it will be cached
 	 * @param allowGPU If true and is enabled in settings, the graphic will be cached on in video memory
 	 */
-	public static function getGraphicUnsafe(key:String, useCache:Bool = true, allowGPU:Bool = true):Null<FlxGraphic>
+	public static function getGraphicDirectly(key:String, useCache:Bool = true, allowGPU:Bool = true):Null<FlxGraphic>
 	{
 		if (useCache && cache.currentTrackedGraphics.exists(key))
 		{
@@ -178,7 +142,7 @@ class FunkinAssets
 	 */
 	public static function getGraphic(key:String, useCache:Bool = true, allowGPU:Bool = true):FlxGraphic
 	{
-		final graphic:Null<FlxGraphic> = getGraphicUnsafe(key, useCache, allowGPU);
+		final graphic:Null<FlxGraphic> = getGraphicDirectly(key, useCache, allowGPU);
 		
 		if (graphic != null)
 		{
@@ -199,7 +163,7 @@ class FunkinAssets
 	 */
 	public static function getSound(key:String, useCache:Bool = true):Sound
 	{
-		final sound:Null<Sound> = getSoundUnsafe(key, useCache);
+		final sound:Null<Sound> = getSoundDirectly(key, useCache);
 		
 		if (sound != null)
 		{
@@ -212,13 +176,13 @@ class FunkinAssets
 	}
 	
 	/**
-	 * Retrives a Sound instance from key.
+	 * Retrives a Sound instance directly from key.
 	 * 
 	 * If the sound could not be found, null will be returned.
 	 * 
 	 * @param useCache Retrieves from the cache if possible. Otherwise, it will be cached
 	 */
-	public static function getSoundUnsafe(key:String, useCache:Bool = true):Null<Sound>
+	public static function getSoundDirectly(key:String, useCache:Bool = true):Null<Sound>
 	{
 		if (useCache && cache.currentTrackedSounds.exists(key))
 		{
@@ -233,23 +197,5 @@ class FunkinAssets
 		if (sound != null) cache.cacheSound(key, sound);
 		
 		return sound;
-	}
-	
-	/**
-	 * Constructs a Sound instance out of a `OGG Vorbis` file providing dramatically faster load times on larger files.
-	 */
-	public static function getVorbisSound(key:String):Null<Sound>
-	{
-		if (!key.endsWith('.${Paths.SOUND_EXT}')) return null;
-
-		#if !lime_vorbis
-		return null;
-		#else
-		final vorbisFile = lime.media.vorbis.VorbisFile.fromFile(key);
-		if (vorbisFile == null) return null;
-		
-		final buffer = lime.media.AudioBuffer.fromVorbisFile(vorbisFile);
-		return Sound.fromAudioBuffer(buffer);
-		#end
 	}
 }

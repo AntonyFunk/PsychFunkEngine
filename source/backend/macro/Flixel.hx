@@ -5,8 +5,7 @@ import haxe.macro.Context;
 import haxe.macro.Type;
 import haxe.macro.Expr;
 
-class FlixelMacro
-{
+class FlixelMacro {
 	/**
 	 * un-implement FlxText feature introduced in 6.1.1
 	**/

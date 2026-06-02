@@ -50,6 +50,7 @@
 ### FlxAnimate (`animate`):
 - Replaced `flxanimate` to `flixel-animate` library.
 - Set was `flixel-animate` library to `1.5.0` version.
+- Updated `lime` library to `8.3.2` version.
 - Updated `openfl` library to `9.5.2` version.
 - Updated `hxvlc` library to `2.2.6` version.
 
