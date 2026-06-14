@@ -49,7 +49,7 @@ class Toy extends objects.Character
 		{
 			case GF: (PlayState.SONG.gfVersion ?? 'gf');
 			case PLAYER: (PlayState.SONG.player1 ?? 'bf');
-			case OPPONENT: (PlayState.SONG.player2 ?? 'bf-pixel-opponent');
+			case OPPONENT: (PlayState.SONG.player2 ?? 'dad');
 		}
 	}
 

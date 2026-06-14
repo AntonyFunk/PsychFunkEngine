@@ -100,6 +100,15 @@ class MusicBeatSubstate extends flixel.FlxSubState
 
 	function _preCreate() callGlobal('onCreateSubState', [this, Type.getClass(this)]);
 	function _postCreate() callGlobal('onCreateSubStatePost', [this, Type.getClass(this)]);
+
+	/**
+	 * Refreshes the state, by redoing the render order of all sprites.
+	 * It does this based on the `zIndex` of each prop.
+	*/
+	public function refresh()
+	{
+		sort(CoolUtil.byZIndex, FlxSort.ASCENDING);
+	}
 	
 	/**
 	 * Updates the Discord Rich Presence.

@@ -40,6 +40,11 @@ class ExtraDataMacro {
 		
 		fields = fields.concat([{
 			pos: pos,
+			name: 'zIndex',
+			access: [APublic],
+			kind: FieldType.FVar(macro :Int, macro $v{0})
+		}, {
+			pos: pos,
 			name: 'extraData',
 			access: [APublic],
 			kind: FieldType.FProp('default', 'null', macro:Map<String, Dynamic>, macro $v{[]})
