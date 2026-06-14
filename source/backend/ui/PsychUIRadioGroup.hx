@@ -34,11 +34,14 @@ class PsychUIRadioGroup extends FlxSpriteGroup
 		_hitbox = new FlxObject();
 
 		arrowUp = new FlxSprite().loadGraphic(Paths.image('psych-ui/arrow_up', 'embed'), true, 24, 18);
+		arrowUp.antialiasing = ClientPrefs.data.antialiasing;
 		arrowUp.animation.add('normal', [0]);
 		arrowUp.animation.add('press', [1]);
 		arrowUp.animation.play('normal');
 		arrowUp.visible = false;
+
 		arrowDown = new FlxSprite().loadGraphic(Paths.image('psych-ui/arrow_down', 'embed'), true, 24, 18);
+		arrowDown.antialiasing = ClientPrefs.data.antialiasing;
 		arrowDown.animation.add('normal', [0]);
 		arrowDown.animation.add('press', [1]);
 		arrowDown.animation.play('normal');
@@ -334,6 +337,7 @@ class PsychUIRadioItem extends PsychUICheckBox
 	override function boxGraphic()
 	{
 		box.loadGraphic(Paths.image('psych-ui/radio', 'embed'), true, 16, 16);
+		box.antialiasing = ClientPrefs.data.antialiasing;
 		box.animation.add('false', [0]);
 		box.animation.add('true', [1]);
 		box.animation.play('false');

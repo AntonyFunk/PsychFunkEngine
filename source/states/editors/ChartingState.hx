@@ -376,6 +376,7 @@ class ChartingState extends ScriptedState implements PsychUIEventHandler.PsychUI
 		}
 
 		mustHitIndicator = FlxSpriteUtil.drawTriangle(new FlxSprite(0, iconY - 20).makeGraphic(16, 16, FlxColor.TRANSPARENT), 0, 0, 16);
+		mustHitIndicator.antialiasing = ClientPrefs.data.antialiasing;
 		mustHitIndicator.scrollFactor.set(1, 0);
 		mustHitIndicator.flipY = true;
 		mustHitIndicator.offset.x += mustHitIndicator.width/2;
@@ -1037,8 +1038,14 @@ class ChartingState extends ScriptedState implements PsychUIEventHandler.PsychUI
 						}
 						pushedNotes.sort((a:Array<Dynamic>, b:Array<Dynamic>) -> FlxSort.byValues(FlxSort.ASCENDING, a[0], b[0]));
 						
-						var minTime:Float = Conductor.getStep(pushedNotes[0][0]);
-						for (note in pushedNotes) note[0] = Conductor.getStep(note[0]);
+						final minStep:Float = Conductor.getStep(pushedNotes[0][0]);
+						for (note in pushedNotes)
+						{
+							var noteStep:Float = Conductor.getStep(note[0]);
+							if (note[2] is Float) note[2] = (Conductor.getStep(note[0] + note[2]) - noteStep);
+							
+							note[0] = (noteStep - minStep);
+						}
 					}
 				}
 				else if (FlxG.keys.justPressed.V) // Paste (Ctrl + V)
@@ -1785,7 +1792,8 @@ class ChartingState extends ScriptedState implements PsychUIEventHandler.PsychUI
 
 	function showOutput(message:String, isError:Bool = false)
 	{
-		trace(message);
+		#if debug trace(message); #end
+
 		outputTxt.text = message;
 		outputTxt.y = FlxG.height - outputTxt.height - 30;
 		outputAlpha = 4;
@@ -3104,6 +3112,7 @@ class ChartingState extends ScriptedState implements PsychUIEventHandler.PsychUI
 					{
 						var dataCopy:Array<Dynamic> = makeNoteDataCopy(event.songData, true);
 						dataCopy[0] = Conductor.getStep(event.strumTime) - sectionStep;
+
 						copiedEvents.push(dataCopy);
 						eventsCopyNum++;
 					}
@@ -3425,8 +3434,8 @@ class ChartingState extends ScriptedState implements PsychUIEventHandler.PsychUI
 		
 		var nextSectionTime:Null<Float> = cachedSectionTimes[curSec + 1];
 		if (nextSectionTime == null) nextSectionTime = Math.POSITIVE_INFINITY;
-		
-		var sectionStep:Float = Conductor.getStep(curSectionTime);
+
+		final sectionStep:Float = Conductor.getStep(curSectionTime);
 		
 		var pushedNotes:Array<MetaNote> = [];
 		var nts:Array<MetaNote> = [];
@@ -3436,12 +3445,14 @@ class ChartingState extends ScriptedState implements PsychUIEventHandler.PsychUI
 			for (note in copiedNotes)
 			{
 				if (note == null) continue;
+				
 				var dataCopy:Array<Dynamic> = makeNoteDataCopy(note, false);
 				
-				var noteStep:Float = dataCopy[0] + sectionStep;
+				var noteStep:Float = (dataCopy[0] + sectionStep);
 				var strumTime:Float = Conductor.stepToSeconds(noteStep);
 				
-				if (strumTime < nextSectionTime) {
+				if (strumTime < nextSectionTime)
+				{
 					dataCopy[0] = strumTime;
 					dataCopy[2] = Conductor.stepToSeconds(noteStep + dataCopy[2]) - strumTime;
 					
@@ -3459,12 +3470,12 @@ class ChartingState extends ScriptedState implements PsychUIEventHandler.PsychUI
 			for (event in copiedEvents)
 			{
 				if (event == null) continue;
+
 				var dataCopy:Array<Dynamic> = makeNoteDataCopy(event, true);
-				dataCopy[0] += sectionStep;
-				
 				var strumTime:Float = Conductor.stepToSeconds(dataCopy[0]);
 
-				if (strumTime < nextSectionTime) {
+				if (strumTime < nextSectionTime)
+				{
 					dataCopy[0] = strumTime;
 					
 					var createdEvent = createEvent(dataCopy);
@@ -5332,16 +5343,16 @@ class ChartingState extends ScriptedState implements PsychUIEventHandler.PsychUI
 					} else {
 						curZoom = zoomList[Std.int(Math.min(zoomList.indexOf(curZoom) + 1, zoomList.length - 1))];
 					}
-
+					
+					loadSection();
+					showOutput('Zoom: ${Math.round(curZoom * 100)}%');
+					updateScrollY();
+					
 					notes.sort(PlayState.sortByTime);
 					forEachRenderedNote((note:MetaNote) -> {
 						positionNoteYOnTime(note);
 						note.updateSustainToZoom(curZoom);
 					});
-					
-					loadSection();
-					showOutput('Zoom: ${Math.round(curZoom * 100)}%');
-					updateScrollY();
 					
 				case FlxKey.A | FlxKey.D:
 					var shiftAdd:Int = (FlxG.keys.pressed.SHIFT ? 4 : 1);

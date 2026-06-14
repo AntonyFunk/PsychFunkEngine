@@ -28,6 +28,7 @@ class PsychUIDropDownMenu extends PsychUIInputText
 		_itemWidth = width - 2;
 
 		button = new FlxSprite(inputText.fieldWidth).loadGraphic(Paths.image('psych-ui/dropdown_button', 'embed'), true, 20, 20);
+		button.antialiasing = ClientPrefs.data.antialiasing;
 		button.animation.add('normal', [0], false);
 		button.animation.add('pressed', [1], false);
 		button.animation.play('normal', true);

@@ -129,9 +129,9 @@ class Paths
 	}
 
 	/**
-	 * Searches for a .hx file directory.
+	 * Searches for a HScript file directory.
 	 */
-	public static inline function hx(key:String, ?folder:String, modsAllowed:Bool = true):String
+	public static inline function hs(key:String, ?folder:String, modsAllowed:Bool = true):String
 	{
 		return getPath('$key.hx', folder, modsAllowed);
 	}

@@ -154,7 +154,6 @@ class StageData {
 					if (data.type != 'square')
 					{
 						if (data.type == 'sprite') spr.loadGraphic(Paths.image(data.image));
-						trace(data.image);
 						
 						if (data.type == 'animatedSprite' && data.animations != null)
 						{

@@ -36,6 +36,7 @@ class PsychUINumericStepper extends PsychUIInputText
 		_updateFilter();
 
 		buttonMinus = new FlxSprite().loadGraphic(Paths.image('psych-ui/stepper_minus', 'embed'), true, 16, 16);
+		buttonMinus.antialiasing = ClientPrefs.data.antialiasing;
 		buttonMinus.animation.add('normal', [0], false);
 		buttonMinus.animation.add('pressed', [1], false);
 		buttonMinus.animation.play('normal');
@@ -50,6 +51,7 @@ class PsychUINumericStepper extends PsychUIInputText
 		inputText.fieldWidth = width - buttonMinus.width - 16;
 		
 		buttonPlus = new FlxSprite(inputText.fieldWidth + buttonMinus.width).loadGraphic(Paths.image('psych-ui/stepper_plus', 'embed'), true, 16, 16);
+		buttonPlus.antialiasing = ClientPrefs.data.antialiasing;
 		buttonPlus.animation.add('normal', [0], false);
 		buttonPlus.animation.add('pressed', [1], false);
 		buttonPlus.animation.play('normal');

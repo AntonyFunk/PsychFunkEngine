@@ -8,7 +8,8 @@ import insanity.Environment;
 import scripting.lua.LuaUtils;
 import scripting.hscript.FunkinHscript;
 
-class GlobalScripts {
+class GlobalScripts
+{
 	public static var game(get, never):FlxState;
 	public static var subState(get, never):FlxState;
 	
@@ -16,10 +17,12 @@ class GlobalScripts {
 	
 	public static var environment:Environment = new Environment();
 	
-	static function get_game():FlxState {
+	static function get_game():FlxState
+	{
 		return FlxG.state;
 	}
-	static function get_subState():FlxState {
+	static function get_subState():FlxState
+	{
 		var subState:FlxState = FlxG.state;
 		
 		while (subState.subState != null)
@@ -30,7 +33,8 @@ class GlobalScripts {
 	
 	#if HSCRIPT_ALLOWED
 	public static var hscriptArray:Array<FunkinHscript> = []; // TODO: lua... also...
-	public static function initHScript(file:String):FunkinHscript {
+	public static function initHScript(file:String):FunkinHscript
+	{
 		var hs:FunkinHscript = FunkinHscript.initFromFile(file, null, FunkinGlobalHscript);
 		if (hs != null) hscriptArray.push(hs);
 		
@@ -38,24 +42,28 @@ class GlobalScripts {
 	}
 	#end
 	
-	public static function init():Void {
+	public static function init()
+	{
 		FlxG.signals.preUpdate.add(() -> call('onUpdate', [FlxG.elapsed]));
 		FlxG.signals.postUpdate.add(() -> call('onUpdatePost', [FlxG.elapsed]));
 		FlxG.signals.preDraw.add(() -> call('onDraw'));
 		FlxG.signals.postDraw.add(() -> call('onDrawPost'));
 	}
-	public static function refresh(complete:Bool = false):Void {
+	public static function refresh(complete:Bool = false)
+	{
 		var tracked:Array<String> = [];
 		resetting = true;
 		
-		if (complete)
-			destroyScripts();
+		if (complete) destroyScripts();
 		
-		for (folder in Mods.directoriesWithFile(Paths.getSharedPath(), 'scripts/global')) {
-			for (file in FileSystem.readDirectory(folder)) {
+		for (folder in Mods.directoriesWithFile(Paths.getSharedPath(), 'scripts/global'))
+		{
+			for (file in FileSystem.readDirectory(folder))
+			{
 				var path:String = '$folder/$file';
 				
-				if (FileSystem.exists(path)) {
+				if (FileSystem.exists(path))
+				{
 					if (findScript(path) != null || initHScript(path) != null)
 						tracked.push(path);
 				}
@@ -63,36 +71,42 @@ class GlobalScripts {
 		}
 		
 		var cleanup:Array<FunkinHscript> = [];
-		for (hs in hscriptArray) {
-			if (!tracked.contains(hs.filePath)) {
+		for (hs in hscriptArray)
+		{
+			if (!tracked.contains(hs.filePath))
+			{
 				destroyScript(hs);
 				cleanup.push(hs);
 			}
 		}
+		
 		while (cleanup.length > 0)
 			hscriptArray.remove(cleanup.shift());
 	}
-	public static function destroyScripts():Void {
+	public static function destroyScripts()
+	{
 		#if HSCRIPT_ALLOWED
-		for (hs in hscriptArray)
-			destroyScript(hs);
+		for (hs in hscriptArray) destroyScript(hs);
 		hscriptArray.resize(0);
 		#end
 	}
 	
-	static function findScript(path:String):FunkinHscript {
-		return Lambda.find(hscriptArray, (hs:FunkinHscript) -> (hs.filePath == path));
+	static function findScript(path:String):FunkinHscript
+	{
+		return hscriptArray.find((hs:FunkinHscript) -> (hs.filePath == path));
 	}
-	static function destroyScript(hs:FunkinHscript):Void {
-		if (hs.exists('onDestroy'))
-			hs.call('onDestroy');
+	static function destroyScript(hs:FunkinHscript)
+	{
+		if (hs.exists('onDestroy')) hs.call('onDestroy');
 		hs.destroy();
 	}
 	
-	public static function call(func:String, ?args:Array<Dynamic>, ?excludeValues:Array<Dynamic>):Dynamic {
+	public static function call(func:String, ?args:Array<Dynamic>, ?excludeValues:Array<Dynamic>):Dynamic
+	{
 		return callOnHScript(func, args, excludeValues);
 	}
-	public static function callOnHScript(func:String, ?args:Array<Dynamic>, ?excludeValues:Array<Dynamic>):Dynamic {
+	public static function callOnHScript(func:String, ?args:Array<Dynamic>, ?excludeValues:Array<Dynamic>):Dynamic
+	{
 		var returnVal:Dynamic = LuaUtils.Function_Continue;
 		
 		#if HSCRIPT_ALLOWED
@@ -101,19 +115,17 @@ class GlobalScripts {
 		excludeValues ??= [];
 		excludeValues.push(LuaUtils.Function_Continue);
 		
-		for (script in hscriptArray) {
-			if (script == null || !script.exists(func))
-				continue;
+		for (script in hscriptArray)
+		{
+			if (script == null || !script.exists(func)) continue;
 			
 			var callValue:Dynamic = script.call(func, args);
-			if (callValue != null) {
-				var myValue:Dynamic = callValue.returnValue;
-				
-				if (myValue == LuaUtils.Function_StopHScript || myValue == LuaUtils.Function_StopAll) {
+			if (callValue != null)
+			{
+				if (callValue == LuaUtils.Function_StopHScript || callValue == LuaUtils.Function_StopAll)
 					return LuaUtils.Function_Stop;
-				} else if (myValue != null && !excludeValues.contains(myValue)) {
-					return myValue;
-				}
+				else if (callValue != null && !excludeValues.contains(callValue))
+					return callValue;
 			}
 		}
 		#end
@@ -121,29 +133,33 @@ class GlobalScripts {
 		return returnVal;
 	}
 	
-	public static function set(variable:String, args:Dynamic):Void {
+	public static function set(variable:String, args:Dynamic)
+	{
 		setOnHScript(variable, args);
 	}
-	public static function setOnHScript(variable:String, args:Dynamic):Void {
+	public static function setOnHScript(variable:String, args:Dynamic)
+	{
 		#if HSCRIPT_ALLOWED
 		if (hscriptArray == null) return;
-		
-		for (script in hscriptArray)
-			script.set(variable, args);
+		for (script in hscriptArray) script.set(variable, args);
 		#end
 	}
 }
 
-class FunkinGlobalHscript extends FunkinHscript {
-	public override function setDefaults():Void {
+class FunkinGlobalHscript extends FunkinHscript
+{
+	public override function setDefaults()
+	{
 		parentState = null;
 		super.setDefaults();
 	}
 	
-	public override function getParent():Dynamic {
+	public override function getParent():Dynamic
+	{
 		return GlobalScripts;
 	}
-	public override function getVariables():Map<String, Dynamic> {
+	public override function getVariables():Map<String, Dynamic>
+	{
 		return FunkinHscript.globalStatic;
 	}
 }

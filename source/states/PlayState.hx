@@ -2203,14 +2203,15 @@ class PlayState extends ScriptedState
 
 		if (startedCountdown && !paused)
 		{
-			Conductor.songPosition += elapsed * 1000 * playbackRate;
+			Conductor.songPosition += (elapsed * 1000 * playbackRate);
 			
 			if (!startingSong && FlxG.sound.music?.playing)
 			{
-				Conductor.songPosition = FlxMath.lerp(FlxG.sound.music.time + Conductor.offset, Conductor.songPosition, Math.exp(-elapsed * 5));
-				var timeDiff:Float = Math.abs((FlxG.sound.music.time + Conductor.offset) - Conductor.songPosition);
-				if (timeDiff > 1000 * playbackRate)
-					Conductor.songPosition = Conductor.songPosition + 1000 * FlxMath.signOf(timeDiff);
+				final musicTime:Float = (@:privateAccess FlxG.sound.music._channel.position + Conductor.offset);
+				final maxDesync:Float = (1000 / 60 / playbackRate);
+
+				if (Math.abs(Conductor.songPosition - musicTime) > maxDesync)
+					Conductor.songPosition = musicTime;
 			}
 		}
 
@@ -3210,9 +3211,9 @@ class PlayState extends ScriptedState
 		if (ret == LuaUtils.Function_Stop) return;
 		
 		// more accurate hit time for the ratings?
-		var lastTime:Float = Conductor.songPosition;
-		if (Conductor.songPosition >= 0 && !startingSong && FlxG.sound.music?.playing)
-			Conductor.songPosition = FlxG.sound.music.time + Conductor.offset;
+		final musicTime:Float = (FlxG.sound.music.playing ? @:privateAccess FlxG.sound.music._channel.position : Conductor.songPosition);
+		final lastTime:Float = Conductor.songPosition;
+		Conductor.songPosition = (musicTime + Conductor.offset);
 		
 		// obtain notes that the player can hit
 		var highestNote:Note = null;
@@ -3242,7 +3243,7 @@ class PlayState extends ScriptedState
 		// Needed for the  "Just the Two of Us" achievement.  - Shadow Mario
 		if (!keysPressed.contains(key)) keysPressed.push(key);
 		
-		//more accurate hit time for the ratings? part 2 (Now that the calculations are done, go back to the time it was before for not causing a note stutter)
+		// more accurate hit time for the ratings? part 2 (Now that the calculations are done, go back to the time it was before for not causing a note stutter)
 		Conductor.songPosition = lastTime;
 		
 		callOnScripts('onKeyPress', [key]);

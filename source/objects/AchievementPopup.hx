@@ -1,15 +1,20 @@
 package objects;
 
 #if ACHIEVEMENTS_ALLOWED
-import openfl.events.Event;
-import openfl.geom.Matrix;
-import flash.display.BitmapData;
 import openfl.Lib;
+import openfl.geom.Matrix;
+import openfl.events.Event;
+import openfl.display.Sprite;
 
-class AchievementPopup extends openfl.display.Sprite {
+import flash.display.BitmapData;
+
+class AchievementPopup extends Sprite
+{
 	public var onFinish:Void->Void = null;
+
 	var alphaTween:FlxTween;
 	var lastScale:Float = 1;
+
 	public function new(achieve:String, onFinish:Void->Void)
 	{
 		super();
@@ -24,14 +29,14 @@ class AchievementPopup extends openfl.display.Sprite {
 		var image:String = 'achievements/$achieve';
 		
 		var achievement:Achievement = null;
-		if(Achievements.exists(achieve)) achievement = Achievements.get(achieve);
+		if (Achievements.exists(achieve)) achievement = Achievements.get(achieve);
 
 		#if MODS_ALLOWED
 		var lastMod = Mods.currentModDirectory;
-		if(achievement != null) Mods.currentModDirectory = achievement.mod != null ? achievement.mod : '';
+		if (achievement != null) Mods.currentModDirectory = achievement.mod != null ? achievement.mod : '';
 		#end
 
-		if(Paths.fileExists('images/$image-pixel.png'))
+		if (Paths.fileExists('images/$image-pixel.png'))
 		{
 			graphic = Paths.image('$image-pixel');
 			hasAntialias = false;
@@ -42,7 +47,7 @@ class AchievementPopup extends openfl.display.Sprite {
 		Mods.currentModDirectory = lastMod;
 		#end
 
-		if(graphic == null) graphic = Paths.image('unknownMod');
+		if (graphic == null) graphic = Paths.image('unknownMod');
 
 		var sizeX = 100;
 		var sizeY = 100;
@@ -56,10 +61,10 @@ class AchievementPopup extends openfl.display.Sprite {
 		// achievement name/description
 		var name:String = 'Unknown';
 		var desc:String = 'Description not found';
-		if(achievement != null)
+		if (achievement != null)
 		{
-			if(achievement.name != null) name = Language.getPhrase('achievement_$achieve', achievement.name);
-			if(achievement.description != null)  desc = Language.getPhrase('description_$achieve', achievement.description);
+			if (achievement.name != null) name = Language.getPhrase('achievement_$achieve', achievement.name);
+			if (achievement.description != null)  desc = Language.getPhrase('description_$achieve', achievement.description);
 		}
 
 		var textX = sizeX + imgX + 15;
@@ -79,7 +84,7 @@ class AchievementPopup extends openfl.display.Sprite {
 		FlxG.stage.addEventListener(Event.RESIZE, onResize);
 		addEventListener(Event.ENTER_FRAME, update);
 
-		FlxG.game.addChild(this); //Don't add it below mouse, or it will disappear once the game changes states
+		FlxG.game.addChild(this); // Don't add it below mouse, or it will disappear once the game changes states
 
 		// fix scale
 		lastScale = (FlxG.stage.stageHeight / FlxG.height);
@@ -109,7 +114,7 @@ class AchievementPopup extends openfl.display.Sprite {
 
 	function update(e:Event)
 	{
-		if(timePassed < 0) 
+		if (timePassed < 0) 
 		{
 			timePassed = Lib.getTimer();
 			return;
@@ -120,10 +125,10 @@ class AchievementPopup extends openfl.display.Sprite {
 		timePassed = time;
 		//trace('update called! $elapsed');
 
-		if(elapsed >= 0.5) return; //most likely passed through a loading
+		if (elapsed >= 0.5) return; // most likely passed through a loading
 
 		countedTime += elapsed;
-		if(countedTime < 3)
+		if (countedTime < 3)
 		{
 			lerpTime = Math.min(1, lerpTime + elapsed);
 			y = ((FlxEase.elasticOut(lerpTime) * (intendedY + 130)) - 130) * lastScale;
@@ -131,7 +136,7 @@ class AchievementPopup extends openfl.display.Sprite {
 		else
 		{
 			y -= FlxG.height * 2 * elapsed * lastScale;
-			if(y <= -130 * lastScale)
+			if (y <= -130 * lastScale)
 				destroy();
 		}
 	}
@@ -165,7 +170,7 @@ class AchievementPopup extends openfl.display.Sprite {
 	{
 		for (clonedBitmap in bitmaps)
 		{
-			if(clonedBitmap != null)
+			if (clonedBitmap != null)
 			{
 				clonedBitmap.dispose();
 				clonedBitmap.disposeImage();
